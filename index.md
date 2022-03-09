@@ -1,16 +1,16 @@
-# Introducción a la Inferencia Causal
+# Introducción a la Inferencia Causal 
 
 ## Profesores:
-José Morales-Arilla, PhD en Políticas Públicas de la Universidad de Harvard.
+**José Morales-Arilla**, PhD en Políticas Públicas de la Universidad de Harvard.
 - Correo de contacto: jose.morales.arilla@gmail.com
 - Horarios de oficina: Viernes, 9am-12am. Agendar a través de Calendly.
 
-Carlos Daboín, Consultor del Workforce of the Future Initiative, The Brookings Institution.
+**Carlos Daboín**, Consultor del Workforce of the Future Initiative, The Brookings Institution.
 - Correo de contacto: cdaboin2@gmail.com
 - Horarios de oficina: Miércoles, 9am-12am. Agendar a través de Calendly.
 
 ## Horario de clase:
-Lunes de 7am a 10am a través de este [link](https://harvard.zoom.us/my/josemoralesarilla)
+Lunes de 7am a 10am a través de este [link](https://harvard.zoom.us/my/josemoralesarilla).
 
 ## Introducción:
 El Premio Nobel de Economía en 2021 fue otorgado a David Card, Joshua Angrist y Guido Imbens por sus "contribuciones metodológicas al análisis de las relaciones causales". Esta "revolución de credibilidad" ha alterado los cimientos empíricos en todas las ciencias sociales (Economía, Psicología, Sociología, Ciencia Política, etc.), así como la práctica de la gestión pública y los negocios. En este curso introductorio construiremos criterios teóricos y herramientas analíticas para la inferencia de relaciones causales tanto en experimentos sociales como en el mundo real. 
@@ -29,17 +29,17 @@ Las asignaciones y el material del curso serán presentados en lenguaje R, por l
 
 ## Evaluación:
 -	Trabajo final y presentación: 30% (15% c/u)
--	  Los trabajos serán en grupo de hasta 5 personas.
+    -	Los trabajos serán en grupo de hasta 5 personas.
 -	Asignaciones: 60% (15% c/u).
--	  Los lineamientos de cada asignación serán brindados tras la clase número 3 del bloque.
+    -	Los lineamientos de cada asignación serán brindados tras la clase número 3 del bloque.
 -	Participación: 10%
--	  Se considerará participación tanto contribuciones en clase como en el foro de discusión. 
+    -	Se considerará participación tanto contribuciones en clase como en el foro de discusión. 
 
-## Lecturas, libros de texto y diseño del curso:
+## Lecturas, textos y diseño del curso:
 Cada clase contará con una lista de lecturas particular que compartiremos con al menos una semana de antelación. El diseño del curso se fundamenta en una nueva literatura para la docencia en temas de inferencia causal. Los principales libros de texto que usamos para el diseño del curso son: 
 
 1.	“Causal Inference: The Mixtape” de Scott Cunningham
-2.	“The Effect: An Introduction to Research Design and Causality” de Nick Huntington-Klein
+2.	“The Effect” de Nick Huntington-Klein
 3.	“Learning Microeconometrics with R” de Christopher Adams
 4.	“Mostly-Harmless Econometrics” de Joshua Angrist y Jörn-Steffen Pischke
 5.	“An Introduction to Statistical Learning with applications in R” de James et al.
@@ -58,22 +58,22 @@ Si bien invitamos la colaboración entre estudiantes, cada estudiante debe entre
 -	Clase 3 – 09/05/2022: Evidencia experimental
 -	Tarea 1 publicada el 09/05/2022. Fecha de entrega: 15/05/2022
 
-###	Bloque 2: Evidencia cuasi-experimental en datos de sección cruzada
+###	Bloque 2: Evidencia cuasi-experimental - Sección cruzada
 -	Clase 4 – 16/05/2022: Matching
 -	Clase 5 – 23/05/2022: Variables instrumentales
 -	Clase 6 – 30/05/2022: Regresión de discontinuidad
 -	Tarea 2 publicada el 30/05/2022. Fecha de entrega: 05/06/2022
 
-###	Bloque 3: Evidencia cuasi-experimental en datos de panel
+###	Bloque 3: Evidencia cuasi-experimental - Panel
 -	Clase 7 – 06/06/2022: Datos de panel
 -	Clase 8 – 13/06/2022: Diferencia en diferencias
 -	Clase 9 – 20/06/2022: Controles sintéticos
 -	Tarea 3 publicada el 20/06/2022. Fecha de entrega: 26/06/2022
 
-###	Bloque 4: Introducción a “Machine Learning” y “Big Data”
+###	Bloque 4: “Machine Learning” y análisis de datos
 -	Clase 10 – 27/06/2022: “Machine Learning” supervisado
 -	Clase 11 – 04/07/2022: “Machine Learning” no supervisado
--	Clase 12 – 11/07/2022: Todo es data
+-	Clase 12 – 11/07/2022: Análisis de datos
 -	Tarea 4 publicada el 11/07/2022. Fecha de entrega: 17/07/2022
 
 ###	Bloque 5: Discusión de la literatura empírica

@@ -435,8 +435,8 @@ $$ P(A|B) = \frac{P(B|A)*P(A)}{P(B)} $$
 
 ### Análisis:
 - Los tests tienen las mismas probabilidades y se asumen independientes entre si bajo cualquier condición.
-- `\(P(C | \bar{T_1}\cap \bar{T_2}) = \frac{P(\bar{T_1}\cap \bar{T_2} | C) * P(C)}{P(\bar{T_1}\cap \bar{T_2})} = \frac{P(\bar{T} | C) * P(\bar{T} | C) * P(C)}{P(\bar{T}) * P(\bar{T}) } = \frac{P(T|C)*P(C|T)}{P(T)}\)`
-- Del ejercicio previo sabemos que `\(P(C|T)=25\%\)`.
+- `\(P(C | \bar{T_1}\cap \bar{T_2}) = \frac{P(\bar{T_1}\cap \bar{T_2} | C) * P(C)}{P(\bar{T_1}\cap \bar{T_2})} = \frac{P(\bar{T} | C) * P(\bar{T} | C) * P(C)}{P(\bar{T}) * P(\bar{T}) } = \frac{P(\bar{T}|C)*P(C|\bar{T})}{P(\bar{T})}\)`
+- Del ejercicio previo sabemos que `\(P(C|\bar{T})=25\%\)`.
 - Por lo tanto, `\(P(C | \bar{T_1}\cap \bar{T_2}) = 12.5\%\)` (Un poco más tranquilo pero... ¿Irías a ver a tu abuelita?)
 
 ### Lección:

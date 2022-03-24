@@ -1,0 +1,932 @@
+---
+title: "Introducción a la Inferencial Causal - Clase 1"
+author: "Jose Morales-Arilla y Carlos Daboín"
+date: "3/14/2022"
+header-includes:
+   - \usetheme{CambridgeUS}
+   #- \usepackage[latin1]{inputenc}
+   - \usefonttheme{professionalfonts}
+   - \usepackage{times}
+   - \usepackage{tikz}
+   - \usepackage{amsmath}
+   - \usepackage{verbatim}
+   - \usetikzlibrary{arrows,shapes}
+   - \usepackage{float}
+   - \usepackage{subfig}   
+   - \usepackage{color} 
+   - \usepackage{tikz}
+   - \usepackage{graphicx}
+   - \usetikzlibrary{decorations.pathreplacing,angles,quotes}
+output: 
+  xaringan::moon_reader:
+    seal: false
+    css: [default, tamu, tamu-fonts]
+    nature:
+      highlightLines: true
+      ratio: '16:9'
+---
+layout: true
+background-image: url(images/ucab.png)
+background-position: 100% 0%
+background-size: 5%
+---
+class: inverse, center, middle
+
+# Causalidad - Clase 1
+
+## José Morales-Arilla y Carlos Daboín
+
+#### Universidad Católica Andrés Bello 
+#### Abril, 2022
+
+```{r setup, echo = FALSE}
+knitr::opts_chunk$set(fig.retina = 3, fig.width = 6, fig.asp = 0.618, out.width = "70%", fig.align = "center", warning = FALSE, message = FALSE)
+```
+
+---
+
+# ¿Quiénes somos?
+
+### Jose Morales-Arilla
+- Economista UCAB
+- Master en Desarrollo Internacional, Universidad de Harvard.
+- PhD en Políticas Públicas Universidad de Harvard.
+- Fellow Postdoctoral, Departamento de Política, Universidad de Princeton.
+- Profesor Asistente, Escuela Bush de Gobierno, Texas A&M University.
+- Correo de contacto: jose.morales.arilla@gmail.com
+- Horarios de oficina: Viernes, 9am-12am. Agendar a través de Calendly.
+
+### Carlos Daboín
+- Economista UCAB
+- Estudiante del Master de Economía, Universidad de San Andrés.
+- Consultor, "Workforce of the Future Initiative", The Brookings Institution.
+- Correo de contacto: cdaboin2@gmail.com
+- Horarios de oficina: Miércoles, 9am-12am. Agendar a través de Calendly.
+
+---
+
+# Revolución de credibilidad en las ciencias sociales
+
+.pull-left[
+### Premio Nobel 2019
+<img src="images/nobel19.png" width="65%" />
+]
+.pull-right[
+### Premio Nobel 2021
+<img src="images/nobel21.png" width="65%" />
+]
+
+???
+Puntos a hacer:
+- Preponderancia de evidencia empírica en la economía moderna.
+- UCAB históricamente: Mucha teoría, poco análisis empírico.
+
+---
+
+# Veamos un video
+
+.center[<img src="images/RCT.png" width="80%" />
+
+### Click [aquí](https://www.youtube.com/watch?v=jmtMf6VJklI).]
+ 
+???
+¿Qué les quedó del video?
+- Método para medir efectos de intervenciones.
+- Analogía con Medicina.
+
+---
+
+# Analogía con la medicina
+
+### [Video](https://www.youtube.com/watch?v=K3odScka55A): ¿Cuál vacuna es mejor, Pfizer or Johnson and Johnson?
+
+--
+
+### ¿Cómo se realizan los experimientos clínicos?
+
+- Muestra aleatoria de la población.
+- Separada aleatoriamente en grupo de tratamiento y de control.
+- A unos se les da la vacuna y a otros un placebo. Nadie sabe que recibió.
+- A los meses, evaluan la proporción afectada en ambos grupos.
+  
+--
+
+### Selección Simple: La vacuna reduce la probabilidad de contagio en 95% para...
+
+  - Todas las personas en el mundo.
+  - La persona promedio en el mundo.
+  - Todas las personas de la población muestreada.
+  - Ninguna de las anteriores.
+  
+---
+
+# Contrafactuales e identificación
+
+### Imaginen que a Carlos lo seleccionan para el grupo de tratamiento...
+- ¿Qué le habría pasado a Carlos si hubiera recibido el placebo?
+  - Si Carlos fuese un tipo tranquilo, probablemente no se contagiaba.
+      - Efecto bajo de la vacuna.
+  - Si Carlos fuese un tipo rumbero, probablemente se contagiaba. 
+      - Efecto alto de la vacuna.
+  - Pero lo cierto es que el Carlos que recibió el placebo no existe.
+      - Es decir: El _contrafactual_ de Carlos no es observable.
+
+--
+
+### Este es el _problema fundamental_ de la inferencia causal
+- No podemos <u>identificar</u> efectos causales a nivel <u>individual</u> porque...
+- ...no podemos ver que le habría pasado al individuo si hubiera...
+- ...recibido un tratamiento distinto al que recibió (su _contrafactual_).
+
+---
+
+# ¿Cuál es la "magia" del experimento?
+
+--
+
+### Al asignar el tratamiento de <u>forma aleatoria</u>, logra que ambos <u>grupos</u>...
+
+--
+
+### ...sean iguales al otro <u>en promedio</u>. Es decir, que un grupo constituye...
+
+--
+
+### ...el <u>contrafactual</u> del otro, y por eso, <u>compararlos</u> permite estimar...
+
+--
+
+### ...el <u>efecto promedio</u> del tratamiento sobre los individuos...
+
+--
+
+### ...en la población sobre la que se tomó una <u>muestra aleatoria</u>.
+
+---
+
+# Posibles problemas
+
+### ¿Qué pasa si la asignación del tratamiento no es aleatoria?
+- No se sabe si diferencias entre grupos son por tratamiento u otro motivo.
+- Problema de <u>validez interna</u> de la evidencia.
+  - **Nobel 2019**: Banerjee (MIT), Duflo (MIT) y Kremer (Harvard).
+
+--
+
+### ¿Qué pasa si la muestra no es aleatoria o representativa?
+- El efecto estimado no es extrapolable a la población general...
+- ...o a poblaciones distintas a la que se utilizó para el experimento.
+- Problema de <u>validez externa</u> de la evidencia.
+  - Angus Deaton (Princeton) - [Video](https://www.youtube.com/watch?v=UB1A62u9fBE)
+
+--
+  
+### Validez externa e interna están en constante tensión.
+- Solo puedes aleatorizar tratamiento a lo micro, pero lo micro no es extrapolable.
+
+ 
+---
+
+# Propinas en Uber:
+### Problema:
+- Los consumidores están dejando poca propina a los delivery de Uber Eats.
+- La conveniencia del servicio depende de la abundancia de deliveries.
+- Si hacen más propina con Door Dash, puede afectarse el servicio.
+
+--
+
+### Pregunta 1: ¿Qué podemos hacer para aumentar las propinas?
+--
+
+- Similar al diseño de la vacuna
+  - Razones para pensar que este tratamiento puede tener efecto deseado.
+
+--
+
+### Pregunta 2: ¿Cómo evaluamos experimentalmente si nuestra estrategia funciona?
+
+--
+
+  - Experimentos en Tech = A/B Testing.
+    - John List: University of Chicago, Ex-Econ Jefe de Uber, Econ. Jefe de Lyft.
+
+---
+
+# ¿Cómo evaluar sin hacer un experimento?
+
+### ¿Qué problemas pueden haber para ejecutar un experimento?
+
+--
+
+- Costos, tiempos, validez externa, etc.
+
+
+### ¿Qué otra cosa puede hacerse? Supongamos que:
+
+- DoorDash empezó a implementar esa misma estrategia hace un año.
+- Hay data de propinas promedio por viaje semanal de 3 años para ambas.
+- No hubo ningún cambio en el esquema de propinas posterior.
+
+--
+
+### En ese caso, podríamos ver...
+
+- Diferencia en propina promedio entre ambas firmas antes y después del tratamiento.
+- El cambio en la diferencia de propina promedio sería el efecto del tratamiento.
+- Supuesto de identificación: 
+  - Uber es el <u>contrafactual</u> de DoorDash si éste no hubiera implementado el tratamiento. 
+
+---
+
+# Evidencia cuasi-experimental ("Experimentos naturales")
+
+### "Correlación no es igual a causalidad"
+
+Data _observacional_: 
+- Información del mundo real. Observada pero no producida por el investigador
+
+Asociaciones en data observacional pueden (suelen) ser _endógenas_. 
+  - Hay más policias donde hay más crimen: ¿Policía $\to$ crimen?
+  - Los más educadas tienen más dinero: ¿Educación $\to$ ingresos?
+  - Causalidad sin correlación: Golpe de timón y dirección del velero.
+
+--
+
+### Conocimiento del contexto + Data + ¿Suerte? = Variación "exógena" en la causa de interés.
+
+- Supuestos de identificación: No se puede probar, pero se puede discutir su plausibilidad.
+- Bajo supuesto de identificación, asociación = causalidad.
+- **Nobel 2021**: Angrist (MIT), Card (Berkeley) e Imbens (Stanford).
+
+---
+
+# Hay que comprometerse con un método
+
+.pull-left[
+Afirmación de [Sachs y Weisbrot (2019)](https://cepr.net/report/economic-sanctions-as-collective-punishment-the-case-of-venezuela/):
+- "Las sanciones financieras de 2017 mataron a 40,000 venezolanos"
+
+¿Cuál fue su análisis para justificar esa afirmación?
+- Tasa de mortalidad creció post-sanciones.
+- ¿Cuál es el supuesto de identificación? ¿Se justifica?
+
+¿El análisis justifica la afirmación?
+- Sachs: "[There is no precision in those numbers](https://www.democracynow.org/2019/5/1/economist_jeffrey_sachs_us_sanctions_have)".
+- Pero se usó públicamente asumiendo precisión.
+
+**Hay que comprometerse con métodos de análisis**
+- Independientemente del resultado.
+- Endender métodos $\to$ Aplicarlos!
+]
+
+.pull-right[.center[<img src="images/Telesur.png" width="60%" />]]
+
+
+---
+
+# El propósito de este curso es enseñarles esos métodos 
+
+.pull-left[
+### Bloques del curso
+1. Fundamentos de causalidad y evidencia experimental
+2. Evidencia cuasi-experimental en datos de sección cruzada
+3. Evidencia cuasi-experimental en datos de panel
+4. _Machine Learning_ y Análisis de datos
+5. Resumen
+
+### Cada bloque tiene...
+- 3 clases de tres horas + 1 tarea
+- JR (Contenido) + Carlos (Programación)
+- Horario: Lunes, 7am a 10am
+
+]
+
+.pull-right[
+
+### Las tareas buscan...
+- Afianzar su conocimiento e intuición.
+- Desarrollar sus capacidades de programación.
+- Desarrollar su proyecto final del curso.
+  - Última clase del semestre: Exposiciones!
+- Entregas: Primera clase del próximo bloque.
+- Proyecto final: Una semana después de expos.
+
+### Vayan pensando en armar grupos:
+
+- De 3 a 5 personas por grupo.
+- Potenciales temas de tesis.
+- Intereses similares.
+  
+]
+
+---
+
+# Probabilidad
+
+.pull-left[
+### Conceptos clave:
+1. Probabilidad condicional
+2. Ley de probabilidad total
+3. Independencia estadística
+4. Independencia condicional
+5. Independencia e Independencia condicional
+6. Teorema de Bayes
+]
+
+
+---
+
+# Probabilidad Condicional
+
+.pull-left[
+### Nuestro amigo, el diagrama de Venn!
+```{r, engine = 'tikz', echo = FALSE, out.width = "100%"}
+\begin{tikzpicture}[scale=.7]
+	% prob space
+	\draw [-, very thick] (0,0) -- (10,0) -- (10,5) -- (0,5) -- (0,0);	
+	
+	\fill [red, opacity=0.5]  (3.8,2.5) circle (2.5);
+	
+	\fill [blue, opacity=0.5] (6.2,2.5) circle (2);
+	
+	\node [below] at (2.2,2.8) {\small{$A (0.39)$}};
+	\node [below] at (5.2,2.8) {\small{$A\cap B$}};
+	\node [below] at (5.2,2.4) {\small{$(0.11)$}};
+	\node [below] at (7.3,2.8) {\small{$B (0.25)$}};
+		
+\end{tikzpicture}
+```
+]
+
+.pull-right[
+### ¿Cuál es la probabilidad de A dado B?
+- Es decir, ¿Cuál es el valor de $P(A|B)$?
+  - 0.39
+  - 0.28
+  - 0.44
+  - No se puede idenficar (NPI)
+
+]
+
+---
+# Ley de la probabilidad total
+.pull-left[
+### ¿Cuál es la probabilidad de A?
+```{r, engine = 'tikz', echo = FALSE, out.width = "100%"}
+\begin{tikzpicture}[scale=.5]
+	% prob space
+	\draw [-, very thick] (0,0) -- (16,0) -- (16,5) -- (0,5) -- (0,0);	
+	
+	\fill [black!80!green, opacity=0.5] (0,0) -- (8,0) -- (8,5) -- (0,5) -- (0,0);
+	
+	\fill [black!20!green, opacity=0.5] (8,0) -- (16,0) -- (16,5) -- (8,5) -- (8,0);
+	
+	\fill [red, opacity=0.5] (2,0.5) -- (12,0.5) -- (12,3) -- (2,3) -- (2,0.5);
+	
+	\draw [-, very thick] (2,0.5) -- (12,0.5) -- (12,3) -- (2,3) -- (2,0.5);
+	
+	\node [above] at (4,5) {\small{$B (0.5)$}};
+	
+	\node [above] at (12,5) {\small{$\overline{B} (0.5)$}};
+
+	\node [left] at (2,1.75) {\small{$A$}};
+		
+	\node at (5,1.75) {\small{0.19}};
+	
+	\node at (10,1.75) {\small{0.13}};
+	
+	\end{tikzpicture}
+```	
+]
+
+.pull-right[
+### Dos formas de calcularlo: 
+- $P(A) = P(A \cap B) + P(A\cap\bar{B})$
+- $P(A) = P(A | B) * P(B) + P(A|\bar{B})*P(\bar{B})$
+]
+---
+# Independencia estadística
+
+.pull-left[
+
+### ¿Es A  independiente de B? ¿Y de C?
+```{r, engine = 'tikz', echo = FALSE, out.width = "100%"}
+\begin{tikzpicture}[scale=.6]
+	% prob space
+	\draw [-, very thick] (0,0) -- (16,0) -- (16,5) -- (0,5) -- (0,0);	
+	
+	\fill [green, opacity=0.5] (0,0) -- (8,0) -- (8,5) -- (0,5) -- (0,0);
+	
+	\fill [brown, opacity=0.5] (8,0) -- (12,0) -- (12,5) -- (8,5) -- (8,0);
+	
+	\fill [blue, opacity=0.5] (12,0) -- (16,0) -- (16,5) -- (12,5) -- (12,0);
+	
+	\fill [red, opacity=0.5] (2,0.5) -- (10.24,0.5) -- (10.24,3) -- (2,3) -- (2,0.5);
+	
+	\draw [-, very thick] (2,0.5) -- (10.24,0.5) -- (10.24,3) -- (2,3) -- (2,0.5);
+
+	
+	\node [above] at (4,5) {\small{$B (0.5)$}};
+	
+	\node [above] at (10,5) {\small{$C (0.28)$}};
+	
+	\node [above] at (14,5) {\small{$D (0.22)$}};
+	
+	\node [left] at (2,1.75) {\small{$A$}};
+	
+	\node at (5,1.75) {\small{0.18}};
+	
+	\node  at (9.2,1.75) {\small{0.07}};
+	
+	\end{tikzpicture}
+
+```
+]
+
+.pull-right[
+### ¿Qué significa que dos eventos sean estadísticamente independientes?
+- Que la realización de uno no cambia la probabilidad de que el otro ocurra.
+- Observar uno **no informa** la probabilidad del otro.
+- En este caso:
+  - $A \not\perp B$, but $A \perp C$.
+- Si $A \perp C$, entonces $P(A \cap C) = P(A)*P(C)$
+  - $P(A) = P(A|C)$
+
+]
+---
+
+# Independencia condicional
+
+.pull-left[
+### ¿Es A $\perp$ B? ¿Es A $\perp$ B condicional en E?
+```{r, engine = 'tikz', echo = FALSE, out.width = "100%"}
+
+\begin{tikzpicture}[scale=.7]
+	% prob space
+	\draw [-, very thick] (0,0) -- (16,0) -- (16,5) -- (0,5) -- (0,0);	
+	
+	\fill [green, opacity=0.5] (0,0) -- (8,0) -- (8,5) -- (0,5) -- (0,0);
+	
+	\fill [brown, opacity=0.5] (8,0) -- (12,0) -- (12,5) -- (8,5) -- (8,0);
+	
+	\fill [blue, opacity=0.5] (12,0) -- (16,0) -- (16,5) -- (12,5) -- (12,0);
+	
+	\fill [red, opacity=0.5] (2,0.5) -- (10.24,0.5) -- (10.24,3) -- (2,3) -- (2,0.5);
+	
+	\draw [-, very thick] (2,0.5) -- (10.24,0.5) -- (10.24,3) -- (2,3) -- (2,0.5);
+	
+	\fill [black, opacity=0.5]  (8,3) circle (1.1);
+	
+	\draw [-, thick]  (8,3) circle (1.1);
+	
+	
+	\node [above] at (4,5) {\small{$B (0.5)$}};
+	
+	\node [above] at (10,5) {\small{$C (0.28)$}};
+	
+	\node [above] at (14,5) {\small{$D (0.22)$}};
+	
+	\node [left] at (2,1.75) {\small{$A$}};
+	
+	\node [above] at (7,3.8) {\small{$E$}};
+	
+	\node at (5,1.75) {\small{0.17}};
+	
+	\node  at (9.2,1.75) {\small{0.06}};
+	
+	\node  at (7.5,2.6) {\tiny{0.01}};
+	
+	\node  at (7.5,3.4) {\tiny{0.01}};
+	
+	\node  at (8.5,3.4) {\tiny{0.01}};
+	
+	\node  at (8.5,2.6) {\tiny{0.01}};
+	
+	\end{tikzpicture}
+```
+]
+
+.pull-right[
+### Dos eventos que están relacionados en general pueden no estarlo en ciertas condiciones.
+
+- $P(A\cap B) \not = P(A)*P(B)$
+  - $P(A | B) \not= P(A)$
+- $P(A \cap B | E)= P(A|E)*P(B|E)$ 
+  - $P(A | B \cap E) = P(A|E)$
+- Este concepto es super importante en evidencia cuasi-experimental!
+  - Supuestos de identificación pueden solo ser plausibles bajo ciertas condiciones.
+
+]
+
+---
+
+# Teorema de Bayes
+
+### Sabemos que:
+- $P(A|B) = \frac{P(A \cap B)}{P(B)}$ ; $P(B|A) = \frac{P(A \cap B)}{P(A)} \to P(A \cap B) = P(B|A)*P(A)$
+
+### Juntando todo, llegamos al Teorema de Bayes:
+
+$$ P(A|B) = \frac{P(B|A)*P(A)}{P(B)} $$
+
+### Donde:
+- $P(A)$: Probabilidad base ("previa") del evento de interés $A$.
+- $P(B|A)$: Verosimilitud de evidencia $B$ si evento $A$ es cierto.
+- $P(B)$: Probabilidad total de la evidencia $B$.
+- $P(A|B)$: Probabilidad actualizada ("Posterior a la evidencia") del evento de interés $A$. 
+
+---
+
+# Ejemplo: Test antígenos del COVID después de una rumba.
+
+### Situación:
+- Desafiando la regulación argentina, Carlos se fue de rumba la semana pasada. Ahora tiene miedo de tener COVID.
+- Por esta razón, Carlos se compró un test rápido de antígenos a la farmacia.
+- Carlos ahora está contento porque el test le salió negativo. Pero... ¿Qué tan contento debería estar?
+
+### Análisis:
+- Eventos y datos: 
+  - $C$: Carlos tiene COVID. 
+  - $\bar{T}$: El test de antígenos dio negativo.
+  - $P(C)=50\%$ (Carlos cree que la probabilidad de haberse contagiado en la fiesta es 50%)
+  - $P(\bar{T}) = 70\%$ (La mayoría de los tests salen negativos)
+  - $P(\bar{T}|C) = 35\%$ (Muchos falsos negativos en tests antígenos temprano en el contagio)
+- Resultado:
+  - $P(C | \bar{T})= \frac{P(\bar{T}|C)*P(C)}{P(\bar{T})} = 25\%$ (Mejor que 50%, pero tampoco para estar tranquilo).
+  
+---
+
+# Ejemplo: Test antígenos del COVID después de una rumba.
+
+### Situación:
+- Para estar más tranquilo, Carlos decide hacerse otro test de antígenos.
+- Este segundo test también da negativo. ¿Qué tan tranquilo debe estar Carlos ahora?
+
+### Análisis:
+- Los tests tienen las mismas probabilidades y se asumen independientes entre si bajo cualquier condición.
+- $P(C | \bar{T_1}\cap \bar{T_2}) = \frac{P(\bar{T_1}\cap \bar{T_2} | C) * P(C)}{P(\bar{T_1}\cap \bar{T_2})} = \frac{P(\bar{T} | C) * P(\bar{T} | C) * P(C)}{P(\bar{T}) * P(\bar{T}) } = \frac{P(T|C)*P(C|T)}{P(T)}$
+- Del ejercicio previo sabemos que $P(C|T)=25\%$.
+- Por lo tanto, $P(C | \bar{T_1}\cap \bar{T_2}) = 12.5\%$ (Un poco más tranquilo pero... ¿Irías a ver a tu abuelita?)
+
+### Lección:
+- "La probabilidad _posterior_ de ayer es la probabilidad _previa_ de hoy" (si los tests son independientes).
+
+---
+
+# Posterior después de un test negativo (Fuentes: [1](https://towardsdatascience.com/understand-bayes-rule-likelihood-prior-and-posterior-34eae0f378c5), [2](https://github.com/syedahmar/MedicalParadox-TDS/blob/main/Bayesian%20Scenarios%20for%20Disease.Rmd))
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+# let us create a function that takes disease prevalence and test accuracy as input, and outputs posterior probability of P(D|positive test)
+get_posterior <-function(disease_prevalence,test_accuracy){
+  
+  # get probabilities associated with disease prevalence 
+  P_D=disease_prevalence # Probability of disease
+  P_ND=1-P_D # Probability of no disease
+  
+  # get probabilities associated with test accuracy
+  P_pos_given_D=test_accuracy # probability of test positive given disease 
+  P_pos_given_ND=1-test_accuracy # probability of test negative given disease
+  P_neg_given_ND=test_accuracy # probability of test negative given no disease
+  P_neg_given_D=1-test_accuracy # probability of test negative given no disease
+  
+  ## Calculate probability of test being positive
+  P_pos_total=P_pos_given_D*P_D + P_pos_given_ND*P_ND
+  
+  ## Calculate posterior, probability of disease given test is positive using Bayes rule
+  P_D_given_pos = (P_pos_given_D*P_D)/P_pos_total
+  
+  # output the result
+  return(P_D_given_pos)
+}
+## Plot posterior vs prevalance for a given test accuracy
+test_accuracy=0.35
+posterior_prevalence=data.frame(prevalence=double(),
+                                posterior=double())
+for (prevalence in seq(0.0000,1,by=0.05)){
+  #print(paste('Processing Prevalence:',prevalence))
+  posterior=get_posterior(prevalence,test_accuracy) * 100
+  new_result=data.frame(prevalence,posterior) # store the result in a new dataframe
+  posterior_prevalence<-rbind(posterior_prevalence,new_result) # append to existing dataframe
+}
+# let us now plot the result (posteior vs prevalence for a given test accuracy)
+posterior_prevalence$prevalence<-posterior_prevalence$prevalence*100
+```
+
+```{r, echo = FALSE, fig.asp = 1, out.width = "45%"}
+library(ggplot2)
+g1<-ggplot(data=posterior_prevalence,aes(x=prevalence,y=posterior))+geom_line(size=2)+labs(title="Prob. Falso Negativo = 35%",x="Previa (%)", y = "Posterior (%)")+scale_x_continuous(breaks=seq(0,100,by=10))+theme(text = element_text(size=20)) + geom_line(aes(x = prevalence, y = prevalence), color = "red")
+g1
+```
+
+---
+
+# Muestreo:
+
+.pull-left[
+### ¿Qué tan salada está la sopa?
+- Tiene partes saladas (Anchoas) y sosas (Papas).
+- ¿Cómo medir que tan salada está en promedio?
+  - No te las puedes tomar completa...
+  - ...pero puedes probar una cucharadita.
+- ¿Cuál es el problema con la cucharadita?
+  - A lo mejor agarras una papa, o una anchoa.
+  - Usar una cuchara más grande ayuda.
+  - Promediar varias cucharaditas ayuda.
+- Problemas:
+  - ¿Y si solo tienes una cucharita? 
+  - ¿Y si solo puedes probar una vez?
+- Solución:
+  - Pruebas la cucharadita, pero consideras la posibilidad de haber agarrado una anchoa. 
+]
+
+
+.pull-right[
+.center[<img src="images/mondongo.jpeg" width="100%" />]
+]
+
+---
+
+# Consideremos una variable aleatoria $Y$
+
+### La variable aleatoria tiene parámetros que nos interesa saber:
+- Valor esperado de la variable aleatoria: $E[Y]=\mu$
+- Desviación estandar de la variable aleatoria: $DE[Y]=\sigma$
+- No sabemos la distribución de la variable aleatoria.
+  
+--
+
+### No tenemos toda la variable (la sopa) pero tenemos una muestra aleatoria (la cucharita):
+- Dada una muestra $y_1, y_2,...,y_n$, el promedio de la muestra es $\bar{Y}=\frac{\sum_{i=1}^{n}y_i}{n}$.
+- El promedio de la muestra es un _estimador_. 
+  - Su valor va a depender del parámetro $\mu$ y de la muestra particular que tomemos...
+  - ...así como la cucharita va a depender de que tan salada está la sopa y de si agarramos una anchoa.
+- Es fácil probar que el promedio de la muestra sigue una _distribución muestral_: $\bar{Y} \sim N(\mu, \frac{\sigma}{\sqrt{n}})$
+  - El valor esperado del estimador es $E[\bar{Y}]=\mu$ 
+  - El _error estandar_ del estimador es $EE[\bar{Y}]=\frac{\sigma}{\sqrt{n}}$.
+
+---
+
+# Veamos el caso de Moncholandia
+
+### Situación
+Moncholandia es un país sufriendo una profunda crisis política. Del millón de adultos moncholenses, 51% votarían por revocar al Presidente Monchulo. Solo Dios sabe ese porcentaje, pero Monchulo quiere estimarlo antes de convocar un Referendum. De las muchas encuestadoras en el país, Monchulo decide contratar a Monchanálisis.
+
+### Simulemos Moncholandia en R
+
+```{r}
+library(tidyverse)
+tamaño = 1000000 # Un millón de moncholenses
+tasa_antimonchista = .51 # Solo Dios sabe que una mayoría quiere salir de Monchulo.
+población = tibble(
+  index = 1:tamaño,
+  antimonchista = (index <= tasa_antimonchista * tamaño),
+  ingresos = 15000 * antimonchista + rnorm(tamaño, 1000000, 30000) # Antis $15k más ricos.
+)
+```
+
+---
+
+# Estimando la proporción de antimonchistas
+
+### Monchoanálisis no puede hacer un censo (tomarse la sopa), pero puede hacer una encuesta (cucharita).
+
+.pull-left[
+```{r}
+set.seed(13) # Replicar muestra aleatoria
+tamaño_muestra = 1000
+
+muestra <- población %>% 
+  sample_n(tamaño_muestra)
+
+prop_anti_muestra <- muestra %>% 
+  summarize(mean(antimonchista)) %>%
+  as.numeric() 
+```
+]
+
+.pull-right[
+### La proporción de antimonchistas en la muestra es de `r prop_anti_muestra*100`%. 
+- Proporción antimonchistas en la población (parámetro) es 51%.
+- El resultado de `r prop_anti_muestra*100`% es parte atraído por el parámetro...
+- ...y parte producto de la fluctuación muestral.
+]
+
+---
+# Monchulo está nervioso pero cree que gana.
+
+### Decide contratar a otra encuestadora: Monchonalítica.
+
+.pull-left[
+```{r}
+muestra_2 <- población %>% 
+  sample_n(tamaño_muestra)
+
+prop_anti_muestra_2 <- muestra_2 %>% 
+  summarize(mean(antimonchista)) %>%
+  as.numeric()
+```
+]
+
+.pull-right[
+  ### En esta nueva muestra, la proporción de antimonchistas es `r prop_anti_muestra_2*100`%.
+]
+
+--
+
+### Aún inseguro, ahora Monchulo contrata a Monchiticom.
+.pull-left[
+```{r}
+muestra_3 <- población %>% 
+  sample_n(tamaño_muestra)
+
+prop_anti_muestra_3 <- muestra_3 %>% 
+  summarize(mean(antimonchista)) %>%
+  as.numeric()
+```
+]
+
+.pull-right[
+  ### En esta nueva muestra, la proporción de antimonchistas es `r prop_anti_muestra_3*100`%. El promedio de las 3 arroja `r round((prop_anti_muestra + prop_anti_muestra_2 + prop_anti_muestra_3)/3*100, 1)`%. Preocupante, pero aún cree que gana.
+]
+
+---
+# Monchulo decide contratar 7 encuestadoras más...
+
+### ...y promediar el resultado obtenido en las 10 encuestas antes de tomar una decisión.
+
+.pull-left[
+```{r}
+muestras_anti <- c(prop_anti_muestra, 
+                   prop_anti_muestra_2, 
+                   prop_anti_muestra_3)
+
+for(i in 1:7){
+  muestra <- población %>% 
+    sample_n(tamaño_muestra)
+  
+  muestras_anti[i+3] <- muestra %>%
+    summarize(mean(antimonchista)) %>%
+    as.numeric()
+}
+
+promedio_10 <- mean(muestras_anti)
+
+h1 <- ggplot(data = tibble(x = muestras_anti), 
+       aes(x = x, y = stat(density*width))) +
+  geom_histogram() + 
+  labs(title="Histograma 10 encuestas",
+       x="Antimonchismo (%)", 
+       y = "Proporción de encuestas")
+```
+]
+
+.pull-right[
+### El promedio de las 10 encuestadoras da `r round(promedio_10 * 100, 1)`%.
+.center[
+```{r, message = FALSE, echo = FALSE, tidy = TRUE, out.width="90%"}
+h1
+```
+] 
+]
+
+---
+
+# ¿Y si Monchulo pudiera hacer 500 encuestas?
+
+.pull-left[
+```{r}
+for(i in 1:490){
+  muestra <- población %>% 
+    sample_n(tamaño_muestra)
+  
+  muestras_anti[i+10] <- muestra %>%
+    summarize(mean(antimonchista)) %>%
+    as.numeric()
+}
+
+media_dist_muestral <- mean(muestras_anti)
+EE_dist_muestral <- sd(muestras_anti)
+
+dist_muestral <- ggplot(data = tibble(x = muestras_anti), 
+       aes(x = x, y = stat(density*width))) +
+  geom_histogram() + 
+  labs(title="Distribución Muestral",
+       x="Antimonchismo (%)", 
+       y = "Proporción de encuestas")
+```
+
+]
+
+.pull-right[
+
+### Recuerden que $\bar{Y} \sim N(\mu, \frac{\sigma}{\sqrt{n}})$
+
+.center[
+```{r, message = FALSE, echo = FALSE, tidy = TRUE, out.width="90%"}
+dist_muestral
+```
+]
+]
+
+---
+
+# Simulando la distribución muestral
+
+### La media de la distribución muestral es `r round(media_dist_muestral * 100, 2)`%
+- Converge a 51%, la verdadera tasa de antimonchismo.
+
+### El error estandar de la distribución muestral es `r round(EE_dist_muestral * 100, 2)`% 
+- Converge a `r round(sd(población$antimonchista)/sqrt(1000)*100,2)`%, lo que dice la fórmula.
+
+### Si tienes una sola muestra aleatoria, ¿Qué haces?
+- Calculas la media de la muestra, calculas el error estandar, y estableces el margen de error (95% de confianza).
+- Como la distribución muestral el Normal, se sabe que el rango del 95% de confianza es la media +-1.96 * EE.
+- Esto sirve para hacer pruebas de hipótesis:
+  - ¿Habrá un empate técnico? Checkea si el 50% cae dentro del intérvalo de confianza.
+  - ¿Podemos rechazar la hipótesis de que una correlación es igual a 0? Checkea si el 0 cae dentro del intérvalo.
+  
+---
+
+# Puedes hacer lo mismo con los ingresos en la población:
+.pull-left[
+```{r}
+muestras_ing <- c()
+for(i in 1:500){
+  muestra <- población %>% 
+    sample_n(tamaño_muestra)
+  
+  muestras_ing[i] <- muestra %>%
+    summarize(mean(ingresos)) %>%
+    as.numeric()
+}
+
+media_dist_muestral_ing <- mean(muestras_ing)
+EE_dist_muestral_ing <- sd(muestras_ing)
+
+dist_muestral_ing <- ggplot(
+  data = tibble(x = muestras_ing), 
+  aes(x = x, y = stat(density*width))) +
+  geom_histogram() + 
+  labs(title="Distribución Muestral",
+       x="Ingresos ($)", 
+       y = "Proporción de encuestas")
+```
+]
+
+.pull-right[
+
+### Recuerden que $\bar{Y} \sim N(\mu, \frac{\sigma}{\sqrt{n}})$
+
+.center[
+```{r, message = FALSE, echo = FALSE, tidy = TRUE, out.width="90%"}
+dist_muestral_ing
+```
+]
+]
+
+---
+
+# Puedes hacer lo mismo con las correlaciones
+
+.pull-left[
+```{r}
+muestras_corr <- c()
+for(i in 1:500){
+  muestra <- población %>% 
+    sample_n(tamaño_muestra)
+  
+  modelo <- lm(ingresos ~ antimonchista, muestra)
+  
+  muestras_corr[i] <- modelo$coefficients[2] %>%
+    as.numeric()
+}
+
+media_dist_muestral_corr <- mean(muestras_corr)
+EE_dist_muestral_corr <- sd(muestras_corr)
+
+dist_muestral_corr <- ggplot(
+  data = tibble(x = muestras_corr), 
+  aes(x = x, y = stat(density*width))) +
+  geom_histogram() + 
+  labs(title="Distribución Muestral",
+       x="Coeficiente", 
+       y = "Proporción de encuestas")
+```
+]
+
+.pull-right[
+
+### Recuerden que $\bar{Y} \sim N(\mu, \frac{\sigma}{\sqrt{n}})$
+
+.center[
+```{r, message = FALSE, echo = FALSE, tidy = TRUE, out.width="90%"}
+dist_muestral_corr
+```
+]
+]
+
+---
+
+class: center, middle
+
+# Gracias

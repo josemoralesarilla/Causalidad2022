@@ -53,6 +53,8 @@ Si bien invitamos la colaboración entre estudiantes, cada estudiante debe entre
 
 ## Temario:
 
+-   Clase 0:  Sesión de información <a href="Clase0/Clase0.html" title="[Slides]">[Slides]</a>
+
 ###	Bloque 1: Introducción y evidencia experimental
 
 -	Clase 1 – 25/04/2022: Introducción al curso + Introducción a R <a href="Clase1/Clase1.html" title="[Slides]">[Slides]</a>

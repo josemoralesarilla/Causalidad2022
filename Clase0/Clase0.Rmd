@@ -1,0 +1,335 @@
+---
+title: "Introducción a la Inferencial Causal - Clase 0"
+author: "Jose Morales-Arilla y Carlos Daboín"
+date: "3/14/2022"
+header-includes:
+   - \usetheme{CambridgeUS}
+   #- \usepackage[latin1]{inputenc}
+   - \usefonttheme{professionalfonts}
+   - \usepackage{times}
+   - \usepackage{tikz}
+   - \usepackage{amsmath}
+   - \usepackage{verbatim}
+   - \usetikzlibrary{arrows,shapes}
+   - \usepackage{float}
+   - \usepackage{subfig}   
+   - \usepackage{color} 
+   - \usepackage{tikz}
+   - \usepackage{graphicx}
+   - \usetikzlibrary{decorations.pathreplacing,angles,quotes}
+output: 
+  xaringan::moon_reader:
+    seal: false
+    css: [default, tamu, tamu-fonts]
+    nature:
+      highlightLines: true
+      ratio: '16:9'
+---
+layout: true
+background-image: url(images/ucab.png)
+background-position: 100% 0%
+background-size: 5%
+---
+class: inverse, center, middle
+
+# Causalidad - Clase 0
+
+## José Morales-Arilla y Carlos Daboín
+
+#### Universidad Católica Andrés Bello 
+#### Abril, 2022
+
+```{r setup, echo = FALSE}
+knitr::opts_chunk$set(fig.retina = 3, fig.width = 6, fig.asp = 0.618, out.width = "70%", fig.align = "center", warning = FALSE, message = FALSE)
+```
+
+---
+
+# ¿Quiénes somos?
+
+### Jose Morales-Arilla
+- Economista UCAB
+- Master en Desarrollo Internacional, Universidad de Harvard.
+- PhD en Políticas Públicas Universidad de Harvard.
+- Fellow Postdoctoral, Departamento de Política, Universidad de Princeton.
+- Profesor Asistente, Escuela Bush de Gobierno, Texas A&M University.
+- Correo de contacto: jose.morales.arilla@gmail.com
+
+### Carlos Daboín
+- Economista UCAB
+- Master (c) en Economía, Universidad de San Andrés.
+- Consultor, "Workforce of the Future Initiative", The Brookings Institution.
+- Correo de contacto: cdaboin2@gmail.com
+
+---
+
+# Revolución de credibilidad en las ciencias sociales
+
+.pull-left[
+### Premio Nobel 2019
+<img src="images/nobel19.png" width="65%" /> 
+]
+.pull-right[
+### Premio Nobel 2021
+<img src="images/nobel21.png" width="65%" />
+]
+
+???
+Puntos a hacer:
+- Preponderancia de evidencia empírica en la economía moderna.
+- Estática comparativa: Variables exógenas y endógenas.
+- Predicción del modelo: ¿Cómo se mueve la endógena ante cambios en la exógena?
+- ¿Será que el mundo se comporta como predice el modelo?
+- ¿Cuál es el efecto causal de la exógena sobre la endógena?
+- UCAB históricamente: Mucha teoría, poco análisis empírico.
+
+---
+
+# Veamos un video
+
+.center[<img src="images/RCT.png" width="80%" />
+
+### Click [aquí](https://www.youtube.com/watch?v=jmtMf6VJklI).]
+ 
+???
+¿Qué les quedó del video?
+- Método para medir efectos de intervenciones.
+- Analogía con Medicina.
+
+---
+
+# Analogía con la medicina
+
+### [Video](https://www.youtube.com/watch?v=K3odScka55A): ¿Cuál vacuna es mejor, Pfizer or Johnson and Johnson?
+
+--
+
+### ¿Cómo se realizan los experimientos clínicos?
+
+- Muestra aleatoria de la población.
+- Separada aleatoriamente en grupo de tratamiento y de control.
+- A unos se les da la vacuna y a otros un placebo. Nadie sabe que recibió.
+- A los meses, evaluan la proporción afectada en ambos grupos.
+  
+--
+
+### Selección Simple: La vacuna reduce la probabilidad de contagio en 95% para...
+
+  - Todas las personas en el mundo.
+  - La persona promedio en el mundo.
+  - Todas las personas de la población muestreada.
+  - Ninguna de las anteriores.
+  
+---
+
+# Contrafactuales e identificación
+
+### Imaginen que a Carlos lo seleccionan para el grupo de tratamiento...
+- ¿Qué le habría pasado a Carlos si hubiera recibido el placebo?
+  - Si Carlos fuese un tipo tranquilo, probablemente no se contagiaba.
+      - Efecto bajo de la vacuna.
+  - Si Carlos fuese un tipo rumbero, probablemente se contagiaba. 
+      - Efecto alto de la vacuna.
+  - Pero lo cierto es que el Carlos que recibió el placebo no existe.
+      - Es decir: El _contrafactual_ de Carlos no es observable.
+
+--
+
+### Este es el _problema fundamental_ de la inferencia causal
+- No podemos <u>identificar</u> efectos causales a nivel <u>individual</u> porque...
+- ...no podemos ver que le habría pasado al individuo si hubiera...
+- ...recibido un tratamiento distinto al que recibió (su _contrafactual_).
+
+---
+
+# ¿Cuál es la "magia" del experimento?
+
+--
+
+### Al asignar el tratamiento de <u>forma aleatoria</u>, logra que ambos <u>grupos</u>...
+
+--
+
+### ...sean iguales al otro <u>en promedio</u>. Es decir, que un grupo constituye...
+
+--
+
+### ...el <u>contrafactual</u> del otro, y por eso, <u>compararlos</u> permite estimar...
+
+--
+
+### ...el <u>efecto promedio</u> del tratamiento sobre los individuos...
+
+--
+
+### ...en la población sobre la que se tomó una <u>muestra aleatoria</u>.
+
+---
+
+# Posibles problemas
+
+### ¿Qué pasa si la asignación del tratamiento no es aleatoria?
+- No se sabe si diferencias entre grupos son por tratamiento u otro motivo.
+- Problema de <u>validez interna</u> de la evidencia.
+  - **Nobel 2019**: Banerjee (MIT), Duflo (MIT) y Kremer (Harvard).
+
+--
+
+### ¿Qué pasa si la muestra no es aleatoria o representativa?
+- El efecto estimado no es extrapolable a la población general...
+- ...o a poblaciones distintas a la que se utilizó para el experimento.
+- Problema de <u>validez externa</u> de la evidencia.
+  - Angus Deaton (Princeton) - [Video](https://www.youtube.com/watch?v=UB1A62u9fBE)
+
+--
+  
+### Validez externa e interna están en constante tensión.
+- Solo puedes aleatorizar tratamiento a lo micro, pero lo micro no es extrapolable.
+
+ 
+---
+
+# Causalidad en el mundo real: Propinas en Uber!
+### Problema:
+- Los consumidores están dejando poca propina a los delivery de Uber Eats.
+- La conveniencia del servicio depende de la abundancia de deliveries.
+- Si hacen más propina con Door Dash, puede afectarse el servicio.
+
+--
+
+### Pregunta 1: ¿Qué podemos hacer para aumentar las propinas?
+--
+
+- Similar al diseño de la vacuna
+  - Razones para pensar que este tratamiento puede tener efecto deseado.
+
+--
+
+### Pregunta 2: ¿Cómo evaluamos experimentalmente si nuestra estrategia funciona?
+
+--
+
+  - Experimentos en Tech = A/B Testing.
+    - John List: University of Chicago, Ex-Econ Jefe de Uber y Lyft, Econ Jefe de Walmart.
+
+---
+
+# No siempre necesitamos hacer un experimento.
+
+### ¿Qué problemas pueden haber para ejecutar un experimento?
+
+--
+
+- Costos, tiempos, validez externa, etc.
+
+--
+
+### ¿Qué otra cosa puede hacerse? Supongamos que:
+
+--
+
+- DoorDash empezó a implementar esa misma estrategia hace un año.
+- Hay data de propinas promedio por viaje semanal de 3 años para ambas.
+- No hubo ningún cambio en el esquema de propinas posterior.
+
+--
+
+### En ese caso, podríamos ver...
+
+- Diferencia en propina promedio entre ambas firmas antes y después del tratamiento.
+- El cambio en la diferencia de propina promedio sería el efecto del tratamiento.
+- Supuesto de identificación: 
+  - Uber es el <u>contrafactual</u> de DoorDash si éste no hubiera implementado el tratamiento. 
+
+---
+
+# Evidencia cuasi-experimental ("Experimentos naturales")
+
+### "Correlación no es igual a causalidad"
+
+Data _observacional_: 
+- Información del mundo real. Observada pero no producida por el investigador
+
+Asociaciones en data observacional pueden (suelen) ser _endógenas_. 
+  - Hay más policias donde hay más crimen: ¿Policía $\to$ crimen?
+  - Los más educadas tienen más dinero: ¿Educación $\to$ ingresos?
+  - Causalidad sin correlación: Golpe de timón y dirección del velero.
+
+--
+
+### Conocimiento del contexto + Data + ¿Suerte? = Variación "exógena" en la causa de interés.
+
+- Supuestos de identificación: No se puede probar, pero se puede discutir su plausibilidad.
+- Bajo supuesto de identificación, asociación = causalidad.
+- **Nobel 2021**: Angrist (MIT), Card (Berkeley) e Imbens (Stanford).
+
+---
+
+# Hay que comprometerse con un método
+
+.pull-left[
+Afirmación de [Sachs y Weisbrot (2019)](https://cepr.net/report/economic-sanctions-as-collective-punishment-the-case-of-venezuela/):
+- "Las sanciones financieras de 2017 mataron a 40,000 venezolanos"
+
+¿Cuál fue su análisis para justificar esa afirmación?
+- Tasa de mortalidad creció post-sanciones.
+- ¿Cuál es el supuesto de identificación? ¿Se justifica?
+
+¿El análisis justifica la afirmación?
+- Sachs: "[There is no precision in those numbers](https://www.democracynow.org/2019/5/1/economist_jeffrey_sachs_us_sanctions_have)".
+- Pero se usó públicamente asumiendo precisión.
+
+**Hay que comprometerse con métodos de análisis**
+- Independientemente del resultado.
+- Endender métodos $\to$ Aplicarlos!
+]
+
+.pull-right[.center[<img src="images/Telesur.png" width="60%" />]]
+
+
+---
+
+# El propósito de este curso es enseñarles esos métodos 
+
+.pull-left[
+### Bloques del curso
+1. Fundamentos de causalidad y evidencia experimental
+2. Evidencia cuasi-experimental en datos de sección cruzada
+3. Evidencia cuasi-experimental en datos de panel
+4. _Machine Learning_ y Análisis de datos
+5. Resumen
+
+### Cada bloque tiene...
+- 3 clases de tres horas + 1 tarea
+- JR (Contenido) + Carlos (Programación)
+- Horario: Jueves, 10am a 1pm (Salvo el 26 de mayo)
+
+]
+
+.pull-right[
+
+### Las tareas buscan...
+- Afianzar su conocimiento e intuición.
+- Desarrollar sus capacidades de programación.
+- Desarrollar su proyecto final del curso.
+  - Última clase del semestre: Exposiciones!
+- Entregas: Primera clase del próximo bloque.
+- Proyecto final: Una semana después de expos.
+
+### Vayan pensando en armar grupos:
+
+- De 3 a 5 personas por grupo.
+- Potenciales temas de tesis.
+- Intereses similares.
+  
+]
+
+---
+class: center, middle
+
+# ¿Preguntas?
+
+---
+class: center, middle
+
+# Gracias

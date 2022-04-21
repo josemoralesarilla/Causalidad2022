@@ -5,14 +5,15 @@
 ## Profesores:
 **José Morales-Arilla**, PhD en Políticas Públicas de la Universidad de Harvard.
 - Correo de contacto: jose.morales.arilla@gmail.com
-- Horarios de oficina: Viernes, 9am-12am. Agendar a través de Calendly.
+- Teléfono: 
+- Horarios de oficina: Miércoles, 2pm-4pm - Agendar por correo.
 
 **Carlos Daboín**, Consultor del Workforce of the Future Initiative, The Brookings Institution.
 - Correo de contacto: cdaboin2@gmail.com
-- Horarios de oficina: Miércoles, 9am-12am. Agendar a través de Calendly.
+- Horarios de oficina: Jueves, 2pm-4pm - Agendar por correo.
 
 ## Horario de clase:
-Lunes de 7am a 10am a través de este [link](https://harvard.zoom.us/my/josemoralesarilla).
+Jueves de 10am a 1pm a través de este [link](https://harvard.zoom.us/my/josemoralesarilla).
 
 ## Introducción:
 El Premio Nobel de Economía en 2021 fue otorgado a David Card, Joshua Angrist y Guido Imbens por sus "contribuciones metodológicas al análisis de las relaciones causales". Esta "revolución de credibilidad" ha alterado los cimientos empíricos en todas las ciencias sociales (Economía, Psicología, Sociología, Ciencia Política, etc.), así como la práctica de la gestión pública y los negocios. En este curso introductorio construiremos criterios teóricos y herramientas analíticas para la inferencia de relaciones causales tanto en experimentos sociales como en el mundo real. 
@@ -57,32 +58,32 @@ Si bien invitamos la colaboración entre estudiantes, cada estudiante debe entre
 
 ###	Bloque 1: Introducción y evidencia experimental
 
--	Clase 1 – 25/04/2022: Introducción al curso + Introducción a R <a href="Clase1/Clase1.html" title="[Slides]">[Slides]</a>
--	Clase 2 – 02/05/2022: Introducción a la inferencia causal
--	Clase 3 – 09/05/2022: Evidencia experimental
--	Tarea 1 publicada el 09/05/2022. Fecha de entrega: 15/05/2022
+-	Clase 1 – 28/04/2022: Introducción al curso + Introducción a R <a href="Clase1/Clase1.html" title="[Slides]">[Slides]</a>
+-	Clase 2 – 05/05/2022: Introducción a la inferencia causal
+-	Clase 3 – 12/05/2022: Evidencia experimental
+-	Tarea 1 publicada el 12/05/2022. Fecha de entrega: 19/05/2022
 
 ###	Bloque 2: Evidencia cuasi-experimental - Sección cruzada
--	Clase 4 – 16/05/2022: Matching
--	Clase 5 – 23/05/2022: Variables instrumentales
--	Clase 6 – 30/05/2022: Regresión de discontinuidad
--	Tarea 2 publicada el 30/05/2022. Fecha de entrega: 05/06/2022
+-	Clase 4 – 19/05/2022: Matching
+-	Clase 5 – **Teoría: LUNES** 23/05/2022 + **Práctica: Jueves** 26/05/2022 + : Variables instrumentales
+-	Clase 6 – 02/06/2022: Regresión de discontinuidad
+-	Tarea 2 publicada el 02/06/2022. Fecha de entrega: 09/06/2022
 
 ###	Bloque 3: Evidencia cuasi-experimental - Panel
--	Clase 7 – 06/06/2022: Datos de panel
--	Clase 8 – 13/06/2022: Diferencia en diferencias
--	Clase 9 – 20/06/2022: Controles sintéticos
--	Tarea 3 publicada el 20/06/2022. Fecha de entrega: 26/06/2022
+-	Clase 7 – 09/06/2022: Datos de panel
+-	Clase 8 – 16/06/2022: Diferencia en diferencias
+-	Clase 9 – 23/06/2022: Controles sintéticos
+-	Tarea 3 publicada el 23/06/2022. Fecha de entrega: 30/06/2022
 
 ###	Bloque 4: “Machine Learning” y análisis de datos
--	Clase 10 – 27/06/2022: “Machine Learning” supervisado
--	Clase 11 – 04/07/2022: “Machine Learning” no supervisado
--	Clase 12 – 11/07/2022: Análisis de datos
--	Tarea 4 publicada el 11/07/2022. Fecha de entrega: 17/07/2022
+-	Clase 10 – 30/06/2022: “Machine Learning” supervisado
+-	Clase 11 – 07/07/2022: “Machine Learning” no supervisado
+-	Clase 12 – 14/07/2022: Análisis de datos
+-	Tarea 4 publicada el 14/07/2022. Fecha de entrega: 21/07/2022
 
 ###	Bloque 5: Discusión de la literatura empírica
--	Clase 13 – 18/07/2022: Revisión de literatura empírica
--	Clase 14 – 25/07/2022: Invitados especiales
--	Clase 15 – 01/08/2022: Presentación de los estudiantes
--	Fecha entrega proyecto final: 07/08/2022
+-	Clase 13 – 21/07/2022: Revisión de literatura empírica
+-	Clase 14 – 28/07/2022: Invitados especiales
+-	Clase 15 – 04/08/2022: Presentación de los estudiantes
+-	Fecha entrega proyecto final: 11/08/2022
 

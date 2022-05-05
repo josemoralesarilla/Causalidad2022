@@ -59,7 +59,7 @@ Si bien invitamos la colaboración entre estudiantes, cada estudiante debe entre
 ###	Bloque 1: Introducción y evidencia experimental
 
 -	Clase 1 – 28/04/2022: Introducción al curso + Introducción a R <a href="Clase1/Clase1.html" title="[Slides]">[Slides]</a>
--	Clase 2 – 05/05/2022: Introducción a la inferencia causal
+-	Clase 2 – 05/05/2022: Introducción a la inferencia causal <a href="Clase2/Clase2.html" title="[Slides]">[Slides]</a>
 -	Clase 3 – 12/05/2022: Evidencia experimental
 -	Tarea 1 publicada el 12/05/2022. Fecha de entrega: 19/05/2022
 

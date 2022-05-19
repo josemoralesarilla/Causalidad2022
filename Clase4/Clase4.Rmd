@@ -1,5 +1,5 @@
 ---
-title: "Introducción a la Inferencial Causal - Clase 3"
+title: "Introducción a la Inferencial Causal - Clase 4"
 author: "Jose Morales-Arilla y Carlos Daboín"
 date: "5/19/2022"
 header-includes:
@@ -32,7 +32,7 @@ background-size: 5%
 ---
 class: inverse, center, middle
 
-# Causalidad - Clase 3
+# Causalidad - Clase 4
 
 ## José Morales-Arilla y Carlos Daboín
 
@@ -57,7 +57,7 @@ library(haven)
 
 ### Muestreo aleatorio compra validez externa, tratamiento aleatorio compra validez interna.
 
-### Exploración de variación adicionar sirve para identificar teoría y decantar sus detalles.
+### Exploración de variación adicional sirve para identificar teoría y decantar sus detalles.
 
 ### No siempre hay cumplimiento perfecto del protocolo experimental.
 
@@ -154,7 +154,7 @@ corr <- feols(profit ~ IP, df)
 
 --
 
-### Bajo este modelo, podemos especular que una correlación positiva entre gastos de litigio y ganancias se debe a las mayores ganancias de las empresas que más litigan (las del sector tecnológico).
+### Bajo este modelo, podemos especular que una correlación positiva entre litigios de IP y ganancias se debe a las mayores ganancias de las empresas que más litigan (las del sector tecnológico).
 
 --
 
@@ -240,14 +240,14 @@ corr_resids <- feols(R_profit ~ R_IP, df)
 ```
 
 Efecto causal estimado: 
-Bajo el modelo, un aumento del costo en litigio de un millón de dólares reduce las ganancias en `r round(as.numeric(corr_resids$coefficients[2])*1000, digits = 2)*-1` mil.
+Bajo el modelo, litigar reduce las ganancias en `r round(as.numeric(corr_resids$coefficients[2])*1000, digits = 2)*-1` mil dólares.
 
 ]
 
 --
 
 .pull-right[
-### El teorema Frisch-Waugh-Lovell prueba que el resultado de ese procedimiento es análogo a correr una sola regresión que "controla" por la variable que queremos residualizar (En este caso, Tech).
+### El teorema Frisch-Waugh-Lovell prueba que el resultado de ese procedimiento es análogo a correr una sola regresión que "controla" por la variable que queremos residualizar (Tech).
 
 #### $\pi_i=\beta_0+\beta_1 * IP_i + \beta_2 * Tech_i + \epsilon_i$
 
@@ -257,7 +257,7 @@ corr_control <-
 ```
 
 Efecto causal estimado: 
-Bajo el modelo, un aumento del costo en litigio de un millón de dólares reduce las ganancias en `r round(as.numeric(corr_control$coefficients[2])*1000, digits = 2)*-1` mil.
+Bajo el modelo, litigar reduce las ganancias en `r round(as.numeric(corr_control$coefficients[2])*1000, digits = 2)*-1` mil dólares.
 
 
 ]

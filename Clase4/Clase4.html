@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>Introducción a la Inferencial Causal - Clase 3</title>
+    <title>Introducción a la Inferencial Causal - Clase 4</title>
     <meta charset="utf-8" />
     <meta name="author" content="Jose Morales-Arilla y Carlos Daboín" />
     <link href="Clase4_files/remark-css-0.0.1/default.css" rel="stylesheet" />
@@ -18,7 +18,7 @@ background-size: 5%
 ---
 class: inverse, center, middle
 
-# Causalidad - Clase 3
+# Causalidad - Clase 4
 
 ## José Morales-Arilla y Carlos Daboín
 
@@ -38,7 +38,7 @@ class: inverse, center, middle
 
 ### Muestreo aleatorio compra validez externa, tratamiento aleatorio compra validez interna.
 
-### Exploración de variación adicionar sirve para identificar teoría y decantar sus detalles.
+### Exploración de variación adicional sirve para identificar teoría y decantar sus detalles.
 
 ### No siempre hay cumplimiento perfecto del protocolo experimental.
 
@@ -136,7 +136,7 @@ corr &lt;- feols(profit ~ IP, df)
 
 --
 
-### Bajo este modelo, podemos especular que una correlación positiva entre gastos de litigio y ganancias se debe a las mayores ganancias de las empresas que más litigan (las del sector tecnológico).
+### Bajo este modelo, podemos especular que una correlación positiva entre litigios de IP y ganancias se debe a las mayores ganancias de las empresas que más litigan (las del sector tecnológico).
 
 --
 
@@ -223,14 +223,14 @@ corr_resids &lt;- feols(R_profit ~ R_IP, df)
 ```
 
 Efecto causal estimado: 
-Bajo el modelo, un aumento del costo en litigio de un millón de dólares reduce las ganancias en 307.96 mil.
+Bajo el modelo, litigar reduce las ganancias en 307.96 mil dólares.
 
 ]
 
 --
 
 .pull-right[
-### El teorema Frisch-Waugh-Lovell prueba que el resultado de ese procedimiento es análogo a correr una sola regresión que "controla" por la variable que queremos residualizar (En este caso, Tech).
+### El teorema Frisch-Waugh-Lovell prueba que el resultado de ese procedimiento es análogo a correr una sola regresión que "controla" por la variable que queremos residualizar (Tech).
 
 #### `\(\pi_i=\beta_0+\beta_1 * IP_i + \beta_2 * Tech_i + \epsilon_i\)`
 
@@ -241,7 +241,7 @@ corr_control &lt;-
 ```
 
 Efecto causal estimado: 
-Bajo el modelo, un aumento del costo en litigio de un millón de dólares reduce las ganancias en 307.96 mil.
+Bajo el modelo, litigar reduce las ganancias en 307.96 mil dólares.
 
 
 ]

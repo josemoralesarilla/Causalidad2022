@@ -1,0 +1,542 @@
+---
+title: "Introducción a la Inferencial Causal - Clase 3"
+author: "Jose Morales-Arilla y Carlos Daboín"
+date: "5/19/2022"
+header-includes:
+   - \usetheme{CambridgeUS}
+   #- \usepackage[latin1]{inputenc}
+   - \usefonttheme{professionalfonts}
+   - \usepackage{times}
+   - \usepackage{tikz}
+   - \usepackage{amsmath}
+   - \usepackage{verbatim}
+   - \usetikzlibrary{arrows,shapes}
+   - \usepackage{float}
+   - \usepackage{subfig}   
+   - \usepackage{color} 
+   - \usepackage{tikz}
+   - \usepackage{graphicx}
+   - \usetikzlibrary{decorations.pathreplacing,angles,quotes}
+output: 
+  xaringan::moon_reader:
+    seal: false
+    css: [default, tamu, tamu-fonts]
+    nature:
+      highlightLines: true
+      ratio: '16:9'
+---
+layout: true
+background-image: url(images/ucab.png)
+background-position: 100% 0%
+background-size: 5%
+---
+class: inverse, center, middle
+
+# Causalidad - Clase 3
+
+## José Morales-Arilla y Carlos Daboín
+
+#### Universidad Católica Andrés Bello 
+#### Mayo, 2022
+
+```{r setup, echo = FALSE}
+knitr::opts_chunk$set(fig.retina = 3, fig.width = 6, fig.asp = 0.618, out.width = "70%", fig.align = "center", warning = FALSE, message = FALSE)
+library(tidyverse)
+library(fixest)
+library(haven)
+```
+
+---
+# ¿Qué aprendimos la clase pasada?
+
+### RCTs son el "Estandar de oro" para la evaluación de efectos causales.
+
+### Siempre empezamos preguntándonos: ¿Cuál sería el experimento ideal?
+
+### Del experimento ideal pasamos al experimento (o al diseño de investigación) posible.
+
+### Muestreo aleatorio compra validez externa, tratamiento aleatorio compra validez interna.
+
+### Exploración de variación adicionar sirve para identificar teoría y decantar sus detalles.
+
+### No siempre hay cumplimiento perfecto del protocolo experimental.
+
+### En ese caso, se identifica el efecto causal "local" para los "cumplidores" (LATE).
+
+---
+# Lamentablemente, no siempre podemos correr experimentos.
+
+### Experimentos cumplen supuesto de que $E[Y_i^x|T_i=x]=E[Y_i^x]$ por diseño. Sin embargo...
+### ...no siempre son posibles, y no siempre son éticos.
+### ...Cuando son posibles y éticos, tienden a ser muy caros.
+### ...Para reducir costos se reducen las muestras... problemas de poder estadístico.
+### ...Para reducir costos se estudian grupos convenientes... problemas de representatividad.
+### ...La gente puede actuar diferente cuando sabe que está en un experimento.
+### ...Intervenciones artificiales pueden no ser iguales al tratamiento "silvestre".
+
+---
+# Alternativa: Analisis de datos *observacionales*.
+
+### Podemos tomar datos del mundo real sobre causas y consecuencias de interés y evaluar su correlación.
+
+### Sin embargo, no podemos generalizar el supuesto de que $E[Y_i^x|T_i=x]=E[Y_i^x]$.
+
+### Es decir, puede haber sesgo de selección.
+
+### Entramos al mundo de la evidencia empírica cuasi-experimental.
+
+### Para identificar efectos causales debemos establecer supuestos de identificación plausibles.
+
+### En contextos sociales pueden haber una infinidad de factores mediando entre causas y consecuencias.
+
+### Podemos formalizar una teoría para guiar nuestra atención a través de un "Modelo".
+
+---
+# ¿Qué es un modelo?
+
+### Un modelo es una simplificación teórica sobre el proceso de generación de los datos observados.
+
+### Refleja las posibles vías que pueden explicar una correlación en el marco de la teoría.
+
+### Una vez se plantea el modelo, este nos indica exactamente como estimar el efecto causal de interés...
+
+--
+
+### ...*bajo el supuesto de que el modelo es correcto*.
+
+--
+
+# Milton Friedman: 
+# "Todos los modelos están equivocados, pero algunos son útiles". 
+
+---
+# ¿Litigios de propiedad intelectual $\to$ menos ganancias?
+
+.pull-left[
+### Simulemos una encuesta industrial
+```{r}
+set.seed(21)
+N <- 1000
+df <- tibble(
+  # ~30% de las firmas están en tech.
+  tech = rbinom(N, 1, .3)) %>% 
+  # ~50% de firmas tech tienen litigios de IP
+  # solo ~10% de firmas en otros sectores.
+  mutate(IP = as.numeric(
+    runif(N) > .9 - .4*tech)) %>%
+  # Firmas tech son muy rentables...
+  # ...pero litigio afecta negativamente.
+  mutate(profit = 2 * tech 
+         - .3 * IP
+         + rnorm(N, mean = 5))
+# Correlación entre gasto en litigio y ganancias:
+corr <- feols(profit ~ IP, df)
+```
+]
+
+.pull-right[
+### En la simulación conocemos el proceso de generación de datos real.
+
+### El investigador no lo conoce, así que trata de estudiar la correlación entre gastos de litigios de IP y ganancias. 
+
+### Una regresión simple sugiere que los litigios se asocian con un aumento de las ganancias de `r round(as.numeric(corr$coefficients[2]*1000), digits = 2)` mil.
+
+### En la simulación, el efecto causal del litigio es -300 mil... ¿Qué está pasando?
+]
+---
+# ¿Qué sospechamos sobre como se generaron estos datos?
+
+### Sospechamos que los costos de IP deben bajar las ganancias.
+
+### Sabemos que en el sector de tecnología hay más demandas por propiedad intelectual.
+
+### Sabemos que las empresas tecnológicas tienden a ser más rentables. 
+
+--
+
+### Bajo este modelo, podemos especular que una correlación positiva entre gastos de litigio y ganancias se debe a las mayores ganancias de las empresas que más litigan (las del sector tecnológico).
+
+--
+
+### Podemos expresar este modelo como un **diagrama causal**.
+#### - Conocidos también como "Gráficas Acíclicas Dirigidas" (DAGs)
+#### - Para hacer un DAG, solo identifica las variables relevantes en tu teoría, e identifica las relaciones causales entre ellas.
+
+---
+# ¿Litigios de propiedad intelectual $\to$ menos ganancias?
+
+.pull-left[
+### ¿Qué sospechamos sobre estos datos?
+
+- Sospechamos que litigio baja las ganancias.
+
+- ...que en el sector de tecnología hay más litigio por propiedad intelectual.
+
+- ...que en tech las empresas son más rentables. 
+]
+
+--
+
+.pull-right[
+### Diagrama de nuestras sospechas y conocimiento
+.center[<img src="images/DAG1.png" width="100%" />]
+]
+
+---
+# DAGs e identificación
+
+.pull-left[
+### Diagrama de nuestras sospechas y conocimiento
+.center[<img src="images/DAG1.png" width="100%" />]
+]
+
+.pull-right[
+### El DAG nos permite:
+
+- Formalizar nuestros supuestos sobre el proceso de generación de datos.
+- Especificar como esos supuestos encajan entre ellos para explicar la realidad.
+- Saber que es lo que hay que hacer para **identificar** un efecto causal bajo los supuestos del modelo. 
+
+### En este caso en particular:
+
+- Nos interesa identificar el efecto de IP.sp $\to$ profit. El DAG sugiere que para identificar ese efecto causal bajo nuestro modelo, debemos "cerrar" la conexión a través de tech.
+
+
+]
+
+---
+# Tenemos que "controlar" por "otros canales" entre causa y efecto.
+
+### Parte de la correlación entre litigio y ganancias puede ser explicada por el sector tecnológico.
+
+### La parte de la correlación entre litigio y ganancias que no es explicada por el sector tecnológico...
+
+### ...captura el efecto causal del litigio sobre las ganancias (en el marco de nuestro modelo).
+
+--
+
+### ¿Qué podemos hacer?
+
+- Explicar el gasto en litigio con la industria y tomar el residuo.
+
+- Explicar las ganancias con la industria y tomar el residuo.
+
+- La asociación entre los residuos es el efecto causal (de acuerdo a nuestro modelo).
+
+---
+# "Residualizar" la variación de tech = Controlar por tech
+
+.pull-left[
+### Residualizar:
+#### $IP_i=\alpha_0+\alpha_1 * Tech_i + \epsilon^{IP}_i$
+#### $\pi_i=\gamma_0+\gamma_1 * Tech_i + \epsilon^{\pi}_i$
+#### $\epsilon^{\pi}_i = \beta_0+\beta_1 * \epsilon^{IP}_i + \epsilon_i$
+```{r}
+df$R_IP <- feols(IP ~ tech, 
+                 df)$residuals
+df$R_profit <- feols(profit ~ tech, 
+                     df)$residuals
+corr_resids <- feols(R_profit ~ R_IP, df)
+```
+
+Efecto causal estimado: 
+Bajo el modelo, un aumento del costo en litigio de un millón de dólares reduce las ganancias en `r round(as.numeric(corr_resids$coefficients[2])*1000, digits = 2)*-1` mil.
+
+]
+
+--
+
+.pull-right[
+### El teorema Frisch-Waugh-Lovell prueba que el resultado de ese procedimiento es análogo a correr una sola regresión que "controla" por la variable que queremos residualizar (En este caso, Tech).
+
+#### $\pi_i=\beta_0+\beta_1 * IP_i + \beta_2 * Tech_i + \epsilon_i$
+
+```{r}
+corr_control <- 
+  feols(profit ~ IP + tech, df)
+```
+
+Efecto causal estimado: 
+Bajo el modelo, un aumento del costo en litigio de un millón de dólares reduce las ganancias en `r round(as.numeric(corr_control$coefficients[2])*1000, digits = 2)*-1` mil.
+
+
+]
+
+---
+# Visualmente: ¿Qué significa "controlar" por algo?
+
+.center[<img src="images/Control1.gif" width="60%" />]
+
+---
+# ¿Cuál es el supuesto de identificación detrás de nuestro DAG?
+
+### Experimentos: Tratamiento es independiente de los resultados portenciales *por diseño*.
+
+### En este caso, no lo sabemos por diseño.
+
+--
+
+### Podríamos asumir que el tratamiento es independiente de los resultados potenciales.
+- El DAG resultante de ese modelo sería IP $\to$ Profit.
+- Efecto causal de IP sobre Profit sería positivo. Raro. Modelo muy simplista, supuesto de identificación implausible.
+
+--
+
+### Supuesto de nuestro modelo: Independencia condicional entre tratamiento y resultados potenciales.
+- El supuesto que establece es el tratamientro y los resultados son **condicionalmente** independientes.
+- "Para firmas que están en el mismo sector, el gasto en IP es independiente de las ganancias potenciales."
+- Es análogo a decir "Condicional en el sector, IP $\perp$ $\pi$ potencial".
+- Correlación simple compara peras con manzanas. Controlar $\to$ Correlación entre empresas del mismo sector. 
+- Bajo nuestro modelo, ese es el efecto causal. 
+---
+# Bajo modelo, no controlar por tech $\to$ sesgo de variable omitida.
+
+.pull-left[
+### Regresión larga: 
+$\pi_i=\beta_0+\beta_1 * IP_i + \beta_2 * Tech_i + \epsilon^L_i$
+
+### Regresión corta: 
+$\pi_i=\alpha_0 + \alpha_1 * IP_i + \epsilon^C_i$
+]
+--
+.pull-right[
+### Regresión auxiliar:
+$Tech_i=\gamma_0 + \gamma_1 * IP_i + \epsilon^A_i$
+
+### Substituyendo auxiliar en regresión larga:
+$\pi_i=\beta_0+\beta_1 * IP_i + \beta_2 * [\gamma_0 + \gamma_1 * IP_i + \epsilon^A_i] + \epsilon^L_i$
+]
+
+--
+.pull-left[
+### Reordenando términamos tenemos:
+$\pi_i=\underbrace{\beta_0+\beta_2 * \gamma_0}_{\alpha_0} + \underbrace{[\beta_1 + \beta_2 * \gamma_1]}_{\alpha_1} * IP_i + \underbrace{\epsilon^L_i + \beta_2*\epsilon^A_i}_{\epsilon^C_i}$
+]
+
+.pull-right[
+### Si corremos regresión corta:
+- Obtenemos $\alpha_1$ como el efecto de $IP$ sobre $\pi$.
+- $\alpha_1$ estimador sesgado de de $\beta_1$.
+- Tamaño del sesgo: $\beta_2 * \gamma_1$
+]
+
+---
+# ¿Por qué no controlar por todo en lugar de depender del modelo?
+
+### Porque existen los "malos controles":
+- No debemos controlar por mecanismos a través de los que X lleva a Y.
+- No debemos controlar por consecuencias de Y.
+- No debemos controlar por "colisionadores" (más adelante).
+- Entender a alguna variable como mecanismo, consecuencia del resultado o colisionador depende del modelo.
+
+### Si nos interesa el efecto de X sobre Y, solo deberíamos controlar por Z bajo el modelo (1).
+.center[<img src="images/DAG2.png" width="60%" />]
+
+---
+# Criterios de puerta principal y puerta trasera.
+### Analogía de las puertas en los DAGs:
+- Correlación: El gato se salió de la casa.
+- Causalidad: ¿Por donde sale el gato de la casa?
+
+### Si te interesa el efecto de la puerta principal sobre la probabilidad de que el gato se salga...
+- Cierra todas las puertas traseras!
+- Correlación entre si la puerta de enfrente se queda abierta o no con la salida del gato = Efecto causal de interés. 
+
+### Para estimar efectos causales, queremos "cerrar" todas las "puertas traseras" del DAG:
+- Todas las vías que el DAG sugiere pueden llevar a una correlación entre X y Y que no van de X -> Y.
+
+---
+# ¿Cuáles son los "caminos" que conectan causa y efecto?
+
+.center[<img src="images/DAG1.png" width="40%" />]
+
+### Nos interesa el efecto de $IP$ $\to$ $\pi$. ¿Qué caminos los conectan?
+- $IP$ $\to$ $\pi$ (Puerta principal)
+- $IP$ $\leftarrow$ $Tech$ $\to$ $\pi$ (Puerta trasera)
+- ¿Cómo cerramos la puerta trasera? "Controlando".
+---
+# ¿Consumo de vino $\to$ Longevidad?
+
+.pull-left[.center[<img src="images/DAG4.png" width="90%" />]]
+--
+.pull-right[
+### Caminos entre consumo de vino y longevidad:
+- vino -> longevidad
+- vino -> drogas -> longevidad
+- vino <- salud -> longevidad
+- vino <- ingreso -> longevidad
+- vino <- salud <- U1 -> ingreso -> longevidad
+- vino <- ingreso <- U1 -> salud -> longevidad
+- (U1: No observable)
+]
+
+### ¿Cuáles son puertas principales y cuales son puertas traseras? ¿Cómo cerramos las traseras?
+
+--
+
+- Principales: vino -> longevidad | vino -> drogas -> longevidad. Traseras: Todas las demás.
+- Método de puerta trasera: Controlando por salud e ingresos.
+  - Las drogas son una puerta principal. U1 no afecta la asociación por vías distintas a salud e ingresos.
+
+---
+# Colisionadores como mal control:
+
+.pull-left[.center[<img src="images/Collider.png" width="90%" />]]
+
+.pull-right[
+### Caminos:
+- X -> Y
+- X <- a -> m <- b -> Y
+
+### En el segundo camino, las flechas "colisionan".
+- Cuando esto ocurre, ya ese camino está cerrado.
+- Controlar por alguna variable en ese canal lo vuelve a abrir. Genera sesgo de selección donde no había.
+
+### Tienes que controlar por m? No.
+- Si controlas por m, también controla por a o b.
+]
+
+---
+# Ejemplo de un colisionador:
+
+.pull-left[
+### ¿Los computines son socialmente raros?
+```{r}
+set.seed(14233)
+survey <- tibble(
+  # Capacidades técnicas.
+  prog=rnorm(1000),
+  # Capacidades sociales.
+  social=rnorm(1000)) %>%
+  # Te contratan por agregado de capacidad.
+  mutate(hired = (prog + social > .25))
+
+# ¿Los computines son más nerdos?
+# En verdad, los computines no son m'as nerdos.
+m1 <- feols(social~prog, survey)
+
+# Si solo encuestamos a los contratados...
+s_hired <- survey %>% filter(hired == 1)
+m2 <- feols(social~prog, data = s_hired)
+
+# Si controlamos por empleo
+m3 <- feols(social ~ prog + hired, data = survey)
+```
+]
+
+--
+
+.pull-right[
+### La correlación simple es correcta:
+- El efecto estimado de capacidades ténicas sobre las sociales es `r round(as.numeric(m1$coefficients[2]), digits = 2)`, estadísticamente insignificante.
+
+### Si restringimos la muestra a los empleados:
+- El efecto estimado de capacidades ténicas sobre las sociales es `r round(as.numeric(m2$coefficients[2]), digits = 2)`, estadísticamente significativo.
+
+### Si controlamos por empleo (Colisionador):
+- El efecto estimado de capacidades ténicas sobre las sociales es `r round(as.numeric(m3$coefficients[2]), digits = 2)`, estadísticamente significativo.
+]
+
+---
+# Ejemplo de un colisionador:
+
+.pull-left[
+  .center[<img src="images/Collider2.png" width="100%" />]
+]
+
+.pull-right[
+### La correlación simple es correcta:
+- El efecto estimado de capacidades ténicas sobre las sociales es `r round(as.numeric(m1$coefficients[2]), digits = 2)`, estadísticamente insignificante.
+
+### Si restringimos la muestra a los empleados:
+- El efecto estimado de capacidades ténicas sobre las sociales es `r round(as.numeric(m2$coefficients[2]), digits = 2)`, estadísticamente significativo.
+
+### Si controlamos por empleo (Colisionador):
+- El efecto estimado de capacidades ténicas sobre las sociales es `r round(as.numeric(m3$coefficients[2]), digits = 2)`, estadísticamente significativo.
+]
+
+---
+# Ejemplo de un colisionador:
+
+.pull-left[
+  .center[<img src="images/Collider3.gif" width="100%" />]
+]
+
+.pull-right[
+### La correlación simple es correcta:
+- El efecto estimado de capacidades ténicas sobre las sociales es `r round(as.numeric(m1$coefficients[2]), digits = 2)`, estadísticamente insignificante.
+
+### Si restringimos la muestra a los empleados:
+- El efecto estimado de capacidades ténicas sobre las sociales es `r round(as.numeric(m2$coefficients[2]), digits = 2)`, estadísticamente significativo.
+
+### Si controlamos por empleo (Colisionador):
+- El efecto estimado de capacidades ténicas sobre las sociales es `r round(as.numeric(m3$coefficients[2]), digits = 2)`, estadísticamente significativo.
+]
+
+
+---
+# Ejercicio:
+.pull-left[
+### Nos interesa el efecto de la educación sobre la fertilidad. Tenemos un modelo capturado por el siguiente DAG:
+]
+
+.pull-right[.center[<img src="images/DAG3.png" width="100%" />]]
+
+### Preguntas:
+- ¿Cuáles son los supuestos en el DAG? ¿Les parecen correctos? 
+- Bajo el modelo: ¿Debemos controlar por ingresos? ¿Debemos controlar por el sector económico?
+
+---
+
+# ¿Cómo dibujamos un DAG?
+### Como no estamos en una simulación, no sabremos el verdadero proceso de generación de datos (DGP).
+- Solo tenemos nuestro conocimiento de la situación y nuestra intuición económica. 
+- El objetivo el DAG es sintetizar ese conocimiento y esa intuición en un set de relaciones causales acíclicas.
+- Un modelo es una simplificación de la realidad. Nuestro DAG no va a capturar el verdadero DGP.
+- Pero que el modelo sea incorrecto no significa que no sea útil. Simplificar permite entender.
+
+### Pasos para construir un DAG partiendo de una pregunta causal.
+- Parte de una linea dirigida desde tu causa de interes hacia tu consecuencia de interés.
+- Considera todas las variables que pueden mediar en esa relación en el DGP (Inclusive las que no puedes observar).
+- Sin sobresimplificar: Combína las que calcen dentro del mismo fenómeno.
+- Sin sobresimplificar: Elimina las que pudiesen ser marginales para el análisis.
+- Considera las relaciones causales entre todas las variables remanentes, y marca lineas dirigidas entre ellas.
+- Las flechas tienen dirección. Dos variables correlacionadas sin flecha entre ellas deben estar causadas por otra.
+- No deben haber ciclos: No puedes seguir las flechas en una dirección y terminar en el mismo sitio.
+- Refleja bucles de retroalimentación con relaciones temporales: Valor de Y en t -> Valor de Y en t+1.
+
+---
+# Hagamos un DAG: 
+# Leyes de protección a la mujer $\to$ Violencia de género.
+
+### Utiliza tu conocimiento de la situación 
+### 1. Lista las variables que pueden mediar en la relación
+### 2. Simplifica sin sobresimplificar
+### 3. Dibuja las flechas.
+---
+# Una vez tenemos nuestro diagrama:
+
+### ¿Cuáles son las puertas principales?
+### ¿Cuáles son las puertas traseras?
+### ¿Cómo podemos "cerrar" las puertas traseras?
+
+---
+# Dos maneras de "Cerrar puertas traseras":
+
+### Residualizar la variación de la puerta trasera:
+- Lo que hacemos con una regresión que "controla" por la puerta trasera.
+
+### Seleccionar comparaciones donde no hay variación en la puerta trasera.
+- Lo que hacemos a través de métodos de "pareo" (Matching).
+- Escoge observaciones para las que los valores de X cambian, pero los valores de Z se mantienen muy similares.
+- Si el tratamiento de interés X es binario, podemos utilizar las variables en Z para predecirlo, y luego evaluar el efecto del tratamiento controlando por la probabilidad de ser tratado (Propensity score matching - ejercicio con Carlos).
+
+### Ambos métodos se sustentan en supuestos estadísticos distintos, pero ambos buscan "cerrar puertas traseras". Todo bajo el supuesto de independencia condicional entre tratamiento y resultados potenciales
+
+
+
+
+---
+class: center, middle
+
+# Gracias

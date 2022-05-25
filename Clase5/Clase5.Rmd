@@ -94,7 +94,7 @@ library(haven)
 ---
 # Matching por una variable continua
 
-.center[<img src="images/Control3.gif" width="60%" />]
+.center[<img src="images/Control3.gif" width="45%" />]
 
 ---
 # Efectos fijos

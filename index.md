@@ -65,7 +65,7 @@ Si bien invitamos la colaboración entre estudiantes, cada estudiante debe entre
 
 ###	Bloque 2: Evidencia cuasi-experimental - Sección cruzada
 -	Clase 4 – 19/05/2022: Supuesto de Independencia Condicional - DAGs, Regresión y Matching <a href="Clase4/Clase4.html" title="[Slides]">[Slides]</a>
--	Clase 5 – **Teoría: LUNES** 23/05/2022 + **Práctica: Jueves** 26/05/2022 + : Variables instrumentales
+-	Clase 5 – Viernes 27/05/2022 : Variables instrumentales <a href="Clase5/Clase5.html" title="[Slides]">[Slides]</a>
 -	Clase 6 – 02/06/2022: Regresión de discontinuidad
 -	Tarea 2 publicada el 02/06/2022. Fecha de entrega: 09/06/2022
 

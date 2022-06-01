@@ -1,0 +1,519 @@
+---
+title: "Introducción a la Inferencial Causal - Clase 6"
+author: "Jose Morales-Arilla y Carlos Daboín"
+date: "6/02/2022"
+header-includes:
+   - \usetheme{CambridgeUS}
+   #- \usepackage[latin1]{inputenc}
+   - \usefonttheme{professionalfonts}
+   - \usepackage{times}
+   - \usepackage{tikz}
+   - \usepackage{amsmath}
+   - \usepackage{verbatim}
+   - \usetikzlibrary{arrows,shapes}
+   - \usepackage{float}
+   - \usepackage{subfig}   
+   - \usepackage{color} 
+   - \usepackage{tikz}
+   - \usepackage{graphicx}
+   - \usetikzlibrary{decorations.pathreplacing,angles,quotes}
+output: 
+  xaringan::moon_reader:
+    seal: false
+    css: [default, tamu, tamu-fonts]
+    nature:
+      highlightLines: true
+      ratio: '16:9'
+---
+layout: true
+background-image: url(images/ucab.png)
+background-position: 100% 0%
+background-size: 5%
+---
+class: inverse, center, middle
+
+# Causalidad - Clase 6
+
+## José Morales-Arilla y Carlos Daboín
+
+#### Universidad Católica Andrés Bello 
+#### Junio, 2022
+
+```{r setup, echo = FALSE}
+knitr::opts_chunk$set(fig.retina = 3, fig.width = 6, fig.asp = 0.618, out.width = "70%", fig.align = "center", warning = FALSE, message = FALSE)
+library(tidyverse)
+library(fixest)
+library(haven)
+```
+
+---
+# ¿Qué aprendimos la clase pasada? 
+
+### Ya sea con controles o con "matching", cerrar TODAS las puertas traseras relevantes es difícil.
+
+### Una estrategia alternativa es aislar la variación "exógena" de la causa de interés.
+
+#### - Los experimentos **crean** su propia variación exógena. A partir de ahora la buscamos en la naturaleza.
+
+### Variables instrumentales: Variables que identifican variación exógena en la causa de interés.
+
+#### - Relevancia: Instrumentos deben asociarse con la causa de interés.
+
+#### - Restricción de exclusión: La única conexión del instrumento con el resultado debe ser a través de la causa. 
+
+### La relevancia la podemos testear. El cumplimiento de la restricción de exclusión es un supuesto.
+
+#### - Plausibilidad del supuesto depende del contexto. Instrumentos pueden ser extraños (Relieve del suelo marino).
+
+#### - Instrumentos identifican efectos "locales" al tipo de variación que inducen sobre la causa de interés (LATE).
+
+---
+# ¿De que otra forma podemos aislar variación exógena en $X$?
+
+### En muchos contextos, existen reglas que determinan la asignación de un tratamiento.
+
+- "Solo hacemos cateter coronario a personas con un puntaje de riesgo a $D$".
+
+- "Para entrar al curso, tienes que sacar $D$ en el examen de admisión".
+
+- "Los colegios que recibieron el plan de alimentación se encontraban dentro de la frontera $D$".
+
+### Es difícil argumentar que $X$ $\perp$ $Y^x$ en general:
+
+- La persona con puntaje de riesgo coronario superior a $D$ es distinta a la persona promedio con puntaje inferior.
+
+- El estudiante promedio con nota superior a $D$ en el examen de admisión es distinto al que tiene puntaje inferior.
+
+- El colegio promedio dentro de la frontera $D$ es distinto al colegio promedio fuera de la frontera.
+
+### Sin embargo, es posible que $X$ $\perp$ $Y^x$ alrededor del límite de asignación del tratamiento $D$.
+
+---
+# Veamos un ejemplo simulado:
+
+### Nos interesa saber el efecto de ir a la universidad sobre los ingresos futuros.
+.pull-left[
+### Lamentablemente, existe una puerta trasera: 
+- Los estudiantes más hábiles salen mejor en las pruebas de admisión del CNU.
+- Los estudiantes más hábiles terminan haciendo más ingresos. 
+- El investigador no observa la habilidad de los estudiantes.
+]
+
+--
+
+.pull-right[
+  <img src="images/base.png" width="100%" />
+]
+
+---
+# Veamos un ejemplo simulado:
+
+### ¿Qué hacer ahora? Aprovechar nuestro conocimiento sobre las reglas de acceso a la universidad.
+
+.pull-left[
+  ### Sabemos que para acceder a la universidad se necesita sacar una nota superior a $D$.
+  - Todos los estudiantes que sacan una nota por debajo de $D$ quedan excluidos. 
+  - Todos los estudiantes que sacan una nota por encima de $D$ van a la universidad.
+  - La nota en el CNU depende de la Habilidad, pero hay aleatoreidad.
+  - Un chamo hábil pudo chocar cuando iba en camino al examen.
+]
+
+.pull-right[
+  <img src="images/limit.png" width="100%" />
+]
+
+---
+# Simulemos la situación:
+
+.pull-left[
+```{r}
+set.seed(5)
+
+df <- tibble(
+  # Habilidad es aleatoria.
+  Habilidad = runif(10000)) %>% 
+  mutate(
+    # Nota en el CNU depende de habilidad y aleatoreidad.
+    CNU = (Habilidad + 0.1 * runif(10000)) * 100,
+    
+    # Nota límite para el acceso = 75.
+    VE = CNU - 75,
+    
+    # Se va a la uni si y solo si se pasa el examen.
+    Univ = if_else(CNU >= 75, 1, 0),
+    
+    # El ingreso depende de ir a la universidad...
+    # ... y de la habilidad.
+    Ingreso = runif(10000) * 100000 + 
+      20000 * Univ + 20000 * Habilidad)
+
+# Regresión simple entre causa y consecuencia.
+reg1 <- feols(Ingreso ~ Univ, df)$coefficients[2]
+```
+]
+--
+
+.pull-right[
+### De la simulación sabemos que el efecto de ir a la universidad sobre los ingresos en la adultez debería ser $20000.
+
+### Sin embargo, al correr una regresión para evaluar la diferencia de ingresos entre los que van a la universidad y los que no, conseguimos una diferencia de $`r round(reg1, digits = 0)`.
+
+]
+
+---
+# Simulemos la situación: ¿Qué podemos hacer?
+
+.pull-left[
+### Tratemos de quedarnos con estudiantes que sacaron una nota cercana a la discontinuidad que determina quien entra a la universidad:
+
+```{r}
+# Establezcamos una banda de 0.5 puntos
+# alrededor de la discontinuidad.
+banda <- .5
+
+# Nos quedamos con aquellos estudiantes 
+# que sacaron entre 74.5 y 75.5.
+df_banda <- df %>% 
+  filter(abs(CNU - 75) < banda)
+
+# Corremos la misma regresión que antes
+# sobre la data restringida alrededor
+# de la discontinuidad.
+reg2 <- feols(Ingreso ~ Univ, df_banda)$coefficients[2]
+```
+]
+--
+
+.pull-right[
+### De la simulación sabemos que el efecto de ir a la universidad sobre los ingresos en la adultez debería ser $20000.
+
+### Al correr una regresión para evaluar la diferencia de ingresos entre los que van a la universidad y los que no **para estudiantes alrededor de la discontinuidad**, conseguimos una diferencia de $`r round(reg2, digits = 0)`.
+
+]
+
+---
+# ¿Por qué restringir la data cerca de la discontinuidad ayuda?
+
+### El investigador no puede observar la habilidad. Nosotros, que simulamos la data, si podemos.
+
+### Evaluemos las diferencias de habilidad cerca de la discontinuidad.
+--
+
+.pull-left[
+```{r fig2, fig.show = 'hide'}
+ggplot(df_banda, aes(x = Habilidad)) + 
+  geom_histogram(data = df_banda %>% filter(Univ == 1),
+                 fill = "red", alpha = 0.2,
+                 aes(y = stat(density*width))) +
+  geom_histogram(data = df_banda %>% filter(Univ == 0),
+                 fill = "blue", alpha = 0.2,
+                 aes(y = stat(density*width))) +
+  labs(y = "Proporción")
+
+```
+]
+
+.pull-right[
+```{r, ref.label="fig2", echo = FALSE}
+```
+]
+
+--
+### Cerca de la discontinuidad, no hay grandes diferencias en habilidad para los que van a la universidad.
+
+---
+# ¿Por qué restringir la data cerca de la discontinuidad ayuda?
+
+### El investigador no puede observar la habilidad. Nosotros, que simulamos la data, si podemos.
+
+### Podemos evaluar la diferencia en habilidad entre los que van a la universidad y los que no.
+--
+
+.pull-left[
+```{r fig1, fig.show = 'hide'}
+ggplot(df, aes(x = Habilidad)) + 
+  geom_histogram(data = df %>% filter(Univ == 1),
+                 fill = "red", alpha = 0.2,
+                 aes(y = stat(density*width))) +
+  geom_histogram(data = df %>% filter(Univ == 0),
+                 fill = "blue", alpha = 0.2,
+                 aes(y = stat(density*width))) +
+  labs(y = "Proporción")
+
+```
+]
+
+.pull-right[
+```{r, ref.label="fig1", echo = FALSE}
+```
+]
+
+--
+### En la data agregada, hay grandes diferencias en habilidad entre los que van a la universidad y los que no.
+
+---
+# Visualmente: ¿Qué estamos haciendo?
+.center[
+  <img src="images/RDD1.gif" width="60%" />
+]
+
+---
+# ¿Por qué $X \sim Y = X \to Y$ cerca de la discontinuidad?
+
+### Partimos de la existencia de una regla que determina la asignación del tratamiento.
+- Existe una **Variable de asignación** (*Running variable*, o $RV$). La regla establece el tratamiento (o un cambio en la intensidad del tratamiento) a partir de cierto valor de la variable de asignación. Ese valor sería la discontinuidad.
+
+### Supuesto de identificación: Aleatoreidad local alrededor de la discontinuidad.
+- La $RV$ es determinada tanto por las puertas traseras como por factores aleatorios.
+  - En nuestro ejemplo: Nota del CNU depende de habilidad y factor aleatorio (Chocaste camino al examen).
+- Si nos enfocamos en un rango angosto (**Banda**) de la $RV$, también limitamos la variación en puertas traseras.
+  - En nuestro ejemplo: Tomar individuos que están hasta un punto de distancia el uno del otro.
+- Si establecemos ese rango alrededor de la discontinuidad, compramos la variación en el tratamiento $X$.
+  - En nuestro ejemplo: Establecemos la banda de un punto alrededor del límite de 75 puntos. 
+- Ante poca variación en puertas traseras = $X$ es "tan bueno como aleatoria" en la muestra restringida.
+  - En nuestro ejemplo: Podemos estimar efecto causal de la universidad con diferencia de medias... en la banda.
+
+#### Otra forma de verlo: En la discontinuidad, todo cambia de forma continua... salvo el tratamiento. 
+
+---
+# Responsabilidad Social Empresarial (RSE)
+
+### Pregunta de investigación: ¿Cuál es el efecto de la RSE sobre las ganancias de las empresas?
+--
+
+### ¿Por qué podría ser mala la RSE para las empresas? ¿Por qué podría ser buena?
+--
+
+### ¿Cómo se determina si una empresa desarrolla programas de RSE?
+--
+
+- Los accionistas tienen que votar.
+- Si 49.9% de los accionistas están a favor, no hay RSE.
+- Si 50.1% de los accionistas están a favor, hay RSE.
+
+--
+
+### Podemos explorar nuestra pregunta de investigación con un ejercicio de discontinuidad electoral.
+- Las elecciones se prestan para el estudio de muchas preguntas causales por la vía de regresión de discontinuidad.
+- No solo en el plano empresarial, sino también en el plano político.
+- Mi favorito: Dell (2014) - Elección de alcaldes pro-gobierno -> Aumento violencia durante guerra contra el narco.
+
+---
+# Pensándolo en DAG:
+
+.center[
+<img src="images/RSE.png" width="60%" />
+]
+
+---
+# Caroline Flammer (2015), Revista: Management Science.
+
+### Variable resultado: Retornos anormales.
+- Precio de la acción - Precio esperado dadas condiciones de mercado.
+
+### Especificación: Comparar empresas donde el voto por RSE apenas ganó vs. apenas perdió.
+
+.center[
+<img src="images/RSE2.png" width="45%" />
+]
+
+---
+# Si esto es tan bueno, ¿por qué no hacerlo siempre?
+
+### No siempre tu causa de interés se asigna de acuerdo a una regla que se preste a este tipo de análisis.
+
+### No siempre pasa que lo único que cambia en esa discontinuidad es tu causa de interés.
+
+### Caso hipotético:
+
+- Te interesa el efecto del salario de los alcaldes sobre la corrupción.
+- Los municipios de más de 10000 personas pagan más a sus alcaldes por ley. 
+- Conseguimos que municipios con población justo por encima de 10000 personas tienen menos corrupción.
+
+### ¿Esto es evidencia de que la compensación del alcalde reduce la corrupción?
+--
+
+- No si la compensación de los legisladores y otros servidores públicos también suben en la misma discontinuidad.
+
+--
+
+### Efectos son "locales" a la discontinuidad. A veces te interesan los efectos lejos de la discontinuidad. 
+
+---
+# Trade-off entre sesgo y varianza a la hora de escoger una "banda"
+
+### Si bien la selección de la banda hasta ahora ha sido arbitraria, pareciera que más angosta es mejor. 
+
+### Llevándolo al absurdo, ¿Por qué no comparar las dos observaciones a cada lado de la discontinuidad?
+--
+
+- Porque si nos quedamos con muy pocas observaciones, los estimados son muy imprecisos. 
+
+--
+
+### A la hora de elegir la banda, enfrentamos un trade-off entre sesgo y varianza.
+- Una banda más angosta es más efectiva para cerrar puertas traseras...
+- ...Pero si reduce las observaciones demasiado, vamos a tener demasiada varianza e imprecisión en nuestros estimados (errores estándares altos).
+- Se reduce el poder estadístico de nuestros tests con bandas más angostas.
+- En nuestro ejemplo anterior: 
+  - La data original tenía 10000 observaciones. 
+  - En la banda de 1 punto alrededor de la discontinuidad quedaron solo 108 observaciones. 
+  
+---
+# Soluciones a este problema:
+
+### Hay nuevos métodos para calcular bandas "óptimas".
+
+### Pero ensanchar la banda siempre comienza a abrir puertas traseras. Queremos controlar por eso.
+
+### ¿Cómo suelen especificarse las discontinuidades de regresión? Caso lineal aplicado a data en la banda:
+
+$$ Y_i = \beta_0 + \beta_1 T_i + \beta_2 RV_i +  + \beta_3 RV_i * T_i + \epsilon_i $$
+- Donde:
+  - $Y_i$ es el resultado de interés.
+  - $RV_i$ es la variable de asignación.
+  - $T_i$ es la causa de interés.
+  - $\beta_2$ captura la asociación entre $RV_i$ y $Y_i$ antes del tratamiento. $\beta_3$ captura el cambio de pendiente en esa asociación después del tratamiento.
+  - $\beta_1$ captura el cambio estimado del resultado en la discontinuidad, y es nuestro efecto de interés.
+---
+# Soluciones a este problema:
+
+### Hay nuevos métodos para calcular bandas "óptimas".
+
+### Pero ensanchar la banda siempre comienza a abrir puertas traseras. Queremos controlar por eso.
+
+### ¿Cómo suelen especificarse las discontinuidades de regresión? Caso polinómico general:
+
+$$Y_i = \phi + \beta T_i + \sum_{k=1}^{K}\alpha^k (RV_i)^k  + \sum_{k=1}^{K}\gamma^k (RV_i)^k * T_i + \epsilon_i$$
+- Donde:
+  - $Y_i$ es el resultado de interés.
+  - $RV_i$ es la variable de asignación.
+  - $T_i$ es la causa de interés.
+  - $k$ es el orden polinómico. Los $\alpha^k$ capturan la forma polinómica en la relación entre $RV_i$ y $Y_i$ antes del tratamiento. Los $\gamma^k$ capturan el cambio de la forma polinómica después del tratamiento.
+  - $\beta$ captura el cambio estimado del resultado en la discontinuidad, y es nuestro efecto de interés.
+---
+# Soluciones a este problema:
+
+### Hay otras formas de fijar relación entre $RV$ y $Y$ antes y después del tratamiento.
+- Métodos no paramétricos. No profundizaremos pero puede que se los encuentren en el futuro.
+
+### Lo más importantes que muestren que sus resultados son robustos a las distintas selecciones que hicieron en su especificación. 
+  - Tamaño de la banda.
+  - Forma polinómica en los controles.
+  - Combinación de ambas.
+  
+### Para confirmar la validez del análisis de discontinuidad:
+- Muestra que características observables no cambian con la discontinuidad (Tests de balance).
+- Muestra que la discontinuidad solo importa cuando debe importar (Tests placebo).
+- Muestra que la densidad de observaciones no cambia en la discontinuidad (Tests "McCrary").
+
+---
+# ¿Por qué evaluar que la densidad no cambia en la discontinuidad?
+
+### Supongamos que el examen del CNU se puede tomar muchas veces... pero hay que pagarlo.
+
+### Puedes entrar en la universidad si sacas más de 75 la última vez que tomaste el test.
+
+### Si tienes la plata, quieres ir a la universidad y sacaste 74, ¿Qué haces? ¿Y si sacaste 76?
+
+--
+
+### Si todos los que tienen la plata se comportan así (pero no todos tienen la plata), ¿Quiénes son en promedio más ricos, los que al final reportaron sacar 74, o los que al final reportaron sacar 76?
+
+--
+
+### ¿Cuál grupo debería ser más grande, el que sacó 74 o el que sacó 76?
+
+--
+
+#### Si la discontinuidad es conocida, puede haber **manipulación** alrededor de la discontinuidad. Esto amenazaría la identificación del efecto de interés, porque los grupos cercanos a cada lado de la discontinuidad dejarían de ser comparables. Si esto ocurre, la densidad de observaciones debería cambiar con la discontinuidad. El test de McCrary evalúa si este es el caso o no. Si no hay cambios en densidad, podemos afirmar que no hay eviencia de manipulación.
+
+---
+# ¿Cuál fue el efecto de los apagones sobre la producción petrolera?
+
+### Producción petrolera venezolana: De 1.58MM bpd a principios de 2019 hasta 0.8MM bpd en octubre.
+
+### A principios de Marzo ocurrieron los apagones, y la oferta eléctrica se mantuvo irregular el resto del año.
+
+### ¿Podemos decir que el total de la caída se debe a los apagones?
+
+--
+
+### Sanciones, crisis política, pérdida de capital humano... todo ocurrió muy cerca.
+
+### Imposible separar entre distintos factores con data pública:
+- Baja periodicidad (Mensual, trimestral).
+- Alta agregación (Totales nacionales).
+
+### Morales (202X?): Utilizar data **diaria** y **por campo** para aislar el efecto de los apagones. 
+
+---
+# ¿Cuál fue el efecto de los apagones sobre la producción petrolera?
+
+### Data privada de producción diaria por campo petrolero (64) en Venezuela.
+- Periodicidad necesaria. Capacidad de separar campos que dependen de inyección vs. "gas asociado".
+- Inyección depende de electricidad, gas asociado no (o menos).
+- Predicción: Efecto debería ser específico (o más fuerte) en campos que dependen de inyección.
+
+### Estimación vía Discontinuidad de regresión.
+- ¿Cuál es la caída discontinua observada el día del apagón?
+- Supuesto de identificación: El efecto de otros factores relevantes cambiaron de forma continua alrededor del día del apagón.
+  - Si las sanciones tienen un efecto, este es continuo alrededor del día del apagón.
+  
+### Estimación base: Lineal + banda óptima (dos semanas).
+- Caída de 28pp el día del apagón. 42pp en campos dependientes de inyección, 14pp en campos de gas asociado.
+
+---
+# Resultados principales:
+
+### Efectos claros, especialmente en campos dependientes de inyección.
+.center[
+<img src="images/oil1.png" width="100%" />
+]
+
+---
+# Resultados principales:
+
+### Efectos claros, especialmente en campos dependientes de inyección.
+.center[
+<img src="images/oil2.png" width="50%" />
+]
+
+---
+# Resultados principales:
+
+### Robustos a distintos tamaños de banda: Entre una y 3 semanas, todo bastante estable.
+.center[
+<img src="images/oil3.png" width="100%" />
+]
+
+---
+# Resultados principales:
+
+### Robusto a controles polinómicos de mayor orden al lineal.
+.center[
+<img src="images/oil4.png" width="100%" />
+]
+
+---
+# Resultados principales:
+
+### Si mueves la discontinuidad a días anteriores o posteriores (placebo), no se replica el efecto negativo.
+.center[
+<img src="images/oil5.png" width="100%" />
+]
+
+---
+# Efectos agregados de los apagones en 2019.
+
+### Si totalizas las pérdidas conectadas al empeoramiento relativo de la producción en campos dependientes de inyección vs. gas asociado, te da $2.3 billion, cerca de 33% de las pérdidas totales de 2019 (hasta octubre). Mi estimado de las pérdidas mínimas imputables a los apagones.
+
+.center[
+<img src="images/oil6.png" width="55%" />
+]
+
+
+---
+class: center, middle
+
+# Gracias

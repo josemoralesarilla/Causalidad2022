@@ -70,7 +70,7 @@ Si bien invitamos la colaboración entre estudiantes, cada estudiante debe entre
 -	Tarea 2 publicada el 02/06/2022. Fecha de entrega: 09/06/2022
 
 ###	Bloque 3: Evidencia cuasi-experimental - Panel
--	Clase 7 – 09/06/2022: Datos de panel
+-	Clase 7 – 09/06/2022: Datos de panel <a href="Clase7/Clase7.html" title="[Slides]">[Slides]</a>
 -	Clase 8 – 16/06/2022: Diferencia en diferencias
 -	Clase 9 – 23/06/2022: Controles sintéticos
 -	Tarea 3 publicada el 23/06/2022. Fecha de entrega: 30/06/2022

@@ -121,7 +121,7 @@ test <- subset(mobility, train_flag == 0) %>% select(-train_flag)
 # Fijemos el modelo más sencillo sobre la data de entrenamiento.
 m1_train <- feols(kfr_pooled_pooled_p25 ~ bowl_per_capita, data = train)
 # Calculemos el RMSE sobre la data de entrenamiento.
-m1_train_rmse <- sqrt(m1$ssr/m1$nobs)
+m1_train_rmse <- sqrt(m1_train$ssr/m1_train$nobs)
 # ¿Este es el valor que nos interesa para evaluar la calidad del modelo?
 # No, nos interesa el RMSE sobre la data de evaluación (Test).
 # ¿Cómo calculamos las predicciones sobre una data distinta? Con la función "predict".
@@ -173,7 +173,7 @@ for(i in 15:25){
   test$sq_resid <- (test$kfr_pooled_pooled_p25 - test$y_hat)^2
   rmse_test <- c(rmse_test, sqrt(sum(test$sq_resid, na.rm = TRUE)/dim(test)[1]))
 }
-RMSE <- tibble(p, rmse_train, rmse_test)
+RMSE <- tibble(numero_variables, rmse_train, rmse_test)
 RMSE %>% ggplot(aes(x = numero_variables, y = rmse_train)) + geom_point() +
   geom_point(aes(x = numero_variables, y = rmse_test), color = 'red')
 

@@ -162,7 +162,7 @@ class: inverse, center, middle
 ---
 # El problema del sobreajuste ("Overfitting")
 
-### Los `\(\beta_k\)` se calculan para minimizar `\(\sum_{i=1}^N\epsilon_i\)` en la data de entrenamiento.
+### Los `\(\beta_k\)` se calculan para minimizar `\(\sum_{i=1}^N\epsilon_i^2\)` en la data de entrenamiento.
 
 --
 
@@ -240,7 +240,7 @@ class: center, middle
 - ### 1) De todos los modelos de una sola variable, ¿Cuál es el mejor? Mantén esa variable en el modelo.
 - ### 2) De todos los modelos de dos variables que incluyen la primera, ¿Cuál es el mejor? Mantén las dos.
 - ### 3) Repetir hasta llegar a un número máximo de variables. 
-- ### 4) Seleccionar nivel de complejidad que minimiza error en data de evaluación.
+- ### 4) Seleccionar nivel de complejidad que minimiza error cuadrático en data de evaluación.
 - ### 5) Si no estás usando data de evaluación, minimiza el criterio de información de Akaike. 
 
 ### Hay distintas versiones de este [protocolo](https://www.statology.org/stepwise-regression-r/) (de simple a complejo, de complejo a simple, bidireccional...)
@@ -263,11 +263,11 @@ class: center, middle
 ---
 # Modelos lineales de Machine Learning: Ridge y LASSO.
 
-### Cuando corremos un MCO, estamos calculando `\(\beta_k\)`s que minimizan `\(\sum_{i=1}^N\epsilon_i\)`.
+### Cuando corremos un MCO, estamos calculando `\(\beta_k\)`s que minimizan `\(\sum_{i=1}^N\epsilon_i^2\)`.
 
-### Ridge regression: Calcula los `\(\beta_k\)`s para minimizar `\(\sum_{i=1}^N\epsilon_i+\lambda*\sum_{k=1}^K\beta_k^2\)`.
+### Ridge regression: Calcula los `\(\beta_k\)`s para minimizar `\(\sum_{i=1}^N\epsilon_i^2+\lambda*\sum_{k=1}^K\beta_k^2\)`.
 
-### LASSO regression: Calcula los `\(\beta_k\)`s para minimizar `\(\sum_{i=1}^N\epsilon_i+\lambda*\sum_{k=1}^K|\beta_k|\)`.
+### LASSO regression: Calcula los `\(\beta_k\)`s para minimizar `\(\sum_{i=1}^N\epsilon_i^2+\lambda*\sum_{k=1}^K|\beta_k|\)`.
 
 --
 

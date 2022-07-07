@@ -77,7 +77,7 @@ Si bien invitamos la colaboración entre estudiantes, cada estudiante debe entre
 
 ###	Bloque 4: “Machine Learning” y análisis de datos
 -	Clase 10 – 30/06/2022: “Machine Learning” I <a href="Clase10/Clase10.html" title="[Slides]">[Slides]</a>
--	Clase 11 – 07/07/2022: “Machine Learning” II
+-	Clase 11 – 07/07/2022: “Machine Learning” II <a href="Clase11/Clase11.html" title="[Slides]">[Slides]</a>
 -	Clase 12 – 14/07/2022: Análisis de datos
 -	Tarea 4 publicada el 14/07/2022. Fecha de entrega: 21/07/2022
 

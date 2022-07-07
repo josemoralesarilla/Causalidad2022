@@ -1,0 +1,377 @@
+---
+title: "Introducción a la Inferencial Causal - Clase 11"
+author: "Jose Morales-Arilla y Carlos Daboín"
+date: "7/07/2022"
+header-includes:
+   - \usetheme{CambridgeUS}
+   #- \usepackage[latin1]{inputenc}
+   - \usefonttheme{professionalfonts}
+   - \usepackage{times}
+   - \usepackage{tikz}
+   - \usepackage{amsmath}
+   - \usepackage{verbatim}
+   - \usetikzlibrary{arrows,shapes}
+   - \usepackage{float}
+   - \usepackage{subfig}   
+   - \usepackage{color} 
+   - \usepackage{tikz}
+   - \usepackage{graphicx}
+   - \usetikzlibrary{decorations.pathreplacing,angles,quotes}
+output: 
+  xaringan::moon_reader:
+    seal: false
+    css: [default, tamu, tamu-fonts]
+    nature:
+      highlightLines: true
+      ratio: '16:9'
+---
+layout: true
+background-image: url(images/ucab.png)
+background-position: 100% 0%
+background-size: 5%
+---
+class: inverse, center, middle
+
+# Causalidad - Clase 11
+
+## José Morales-Arilla y Carlos Daboín
+
+#### Universidad Católica Andrés Bello 
+#### Julio, 2022
+
+```{r setup, echo = FALSE}
+knitr::opts_chunk$set(fig.retina = 3, fig.width = 6, fig.asp = 0.618, out.width = "70%", fig.align = "center", warning = FALSE, message = FALSE)
+library(tidyverse)
+library(fixest)
+library(haven)
+library(stats)
+library(dagitty)
+library(lavaan)
+```
+
+---
+# ¿Qué aprendimos la clase pasada? 
+
+### Queremos conseguir el modelo que minimice el error de predicción sobre datos que no ha visto aún.
+
+### Aumentar la "complejidad" del modelo siempre reduce el error dentro de la muestra.
+
+### Pero queremos encontrar la "complejidad" óptima para minimizar el error "fuera de muestra".
+
+### ¿Qué es la complejidad en MCO? Número de variables. Muchos modelos posibles con un número dado.
+
+### Ventaja de Machine Learning: Métele todas las variables, y controla la complejidad con otro parámetro.
+
+### Modelos ML lineal: MCO + penalización de la suma total de los coeficientes (estandarizar predictores!).
+
+### Parámetro $\lambda$ controla la penalización de los coeficientes (más penalización $\to$ menor complejidad).
+- ¿Cómo escogemos el nivel de complejidad (valor de $\lambda$) óptimo? Proceso de "validación cruzada" en training data.
+
+---
+# ¿Cómo capturamos no linealidades en modelos lineales?
+
+### Interacciones: Crear una tercera variable que sea la multiplación de otras dos (o más).
+- Lo vimos para el estudio de interseccionalidades: El efecto de ser una mujer afro puede ser distinto a la suma de los efecto de ser mujer y ser afro.
+
+### Expansiones polinómicas: Crear una variable que sea la multiplicación de una variable por si misma.
+- El daño del paso de un carro sobre una carretera es una función polinómica a la 4ta de su peso.
+- ¿Cómo construir un modelo lineal que capture esa relación? $Daño_i=\sum_{k=0}^4\beta_k * Peso_i^k+\epsilon_i$
+
+--
+
+### Los computines han diseñado modelos ML que capturan relaciones no-lineales sin tener que crearlas.
+
+### Modelos no lineales que vamos a estudiar: "Árboles de Decisión" y "Bosques Aleatorios".
+- Otros muy populares: Deep learning/Neural networks. No los vamos a estudiar en interés del tiempo.
+
+---
+# Predecir movilidad social por ciudad con bowling y padres solteros.
+
+.center[
+<img src="images/ing1.png" width="70%" />
+]
+
+--
+
+### Modelo MCO multivariable: $\hat{Y_i}=56.9+0.41*Bowl_i-70.1*Soltero_i$ 
+
+---
+# Predicción de un modelo lineal
+
+.center[
+<img src="images/ing2.png" width="68%" />
+]
+
+### Modelo MCO multivariable: $\hat{Y_i}=56.9+0.41*Bowl_i-70.1*Soltero_i$ 
+
+---
+# Árboles de decisión - Funcionamiento visual:
+
+.center[
+<img src="images/ing1.png" width="90%" />
+]
+
+---
+# Árboles de decisión - Funcionamiento visual:
+
+.center[
+<img src="images/ing1.png" width="90%" />
+]
+
+---
+# Árboles de decisión - Funcionamiento visual:
+
+.center[
+<img src="images/ing3.png" width="80%" />
+]
+
+---
+# Árboles de decisión - Funcionamiento visual:
+
+.center[
+<img src="images/ing4.png" width="80%" />
+]
+
+---
+# Árboles de decisión - Funcionamiento visual:
+
+.center[
+<img src="images/ing5.png" width="82%" />
+]
+
+---
+# Árboles de decisión - Funcionamiento visual:
+
+.center[
+<img src="images/ing6.png" width="80%" />
+]
+
+---
+# Árboles de decisión - Funcionamiento visual:
+
+.center[
+<img src="images/ing7.png" width="75%" />
+]
+
+---
+# Árboles de decisión - Algoritmo:
+
+### 1. Entre todas las divisiones binarias posibles para cada predictor en data $R$, conseguir el split binario de $R$ en segmentos $R1$ y $R2$  cuyos promedios minimicen el RMSE dentro de la muestra. 
+- En el caso anterior: R1 = Ciudades con % de padres solteros menor a 17%. R2 = Complemento. 
+- ¿Por qué Padres Solteros, y por qué 17%? Porque es la división binaria de la data que minimiza el RMSE.
+
+### 3. Repetir para $R1$ y $R2$: ¿Cuál es el segundo split? El que más reduzca el RMSE total. 
+- En el caso anterior: Split 2 es sobre R2, en base al mismo predictor. R3: % solteros > 17% & % solteros < 22%.
+
+### 4. Repetir el procedimiento hasta que se alcance una regla de detención pre-establecida.
+- En el caso anterior: Split 3 es sobre R3 en base a número de boliches. Regla = 3 splits. Algoritmo se detiene. 
+
+### 5. Predicción del modelo: Promedio de la variable resultado en los segmentos resultantes del algoritmo.
+
+---
+# Ventajas de los árboles de decisión
+
+### Interpretabilidad visual del modelo + Captura no linearidades en la data.
+
+--
+
+### Pregunta: ¿Por qué decimos que se capturan no linealidades en la data?
+
+--
+
+### Respuesta: Porque las predicciones se basan en segmentaciones conjuntas de todos los predictores.
+
+--
+
+### $$\hat{Y_i} = \beta_1 * 1[SP_i<17\%] + \beta_2 * 1[SP_i>22\%]+$$
+### $$\beta_3*1[SP_i\in[17\%,22\%]\cap Bowl_i<3.1] +$$
+### $$\beta_4*1[SP_i\in[17\%,22\%]\cap Bowl_i>3.1]$$
+
+--
+
+### $\beta_1=50.46$, $\beta_2=38.77$, $\beta_3=42.36$ y $\beta_4=45.07$
+
+---
+# ¿Cómo se controla la "complejidad" de un arbol de decisión?
+
+### En el caso anterior, la regla de detención era de 3 splits. 
+
+### Pregunta: ¿Cómo termina el arbol de decisión si no le ponemos límites al número de splits?
+
+--
+
+### Respuesta: Tantos segmentos como observaciones hay en la data. Cada observación tiene su predicción.
+
+--
+
+### Pregunta: ¿Cuál es el problema con tener un segmento distinto para cada observación?
+
+--
+
+### Respuesta: Sobreajuste (Overfitting). Ese modelo va a ser terrible fuera de muestra.
+
+--
+
+### Pregunta: ¿Cómo se elige el nivel de complejidad óptimo de un modelo de Machine Learning?
+
+--
+
+### Respuesta: Validación cruzada.
+
+---
+class: center, middle
+
+# Vamo'acelo!
+
+---
+# Bosques aleatorios (Random forests)
+
+### Es un modelo de ML que extiende la lógica de los árboles de decisiones.
+
+### ¿Qué lo hace tan cool? Tiende a generar resultados tan buenos como modelos mucho más complejos.
+
+### Implementa la lógica del resampleo de los datos con reposición ("Bootstrapping").
+
+---
+# "Bootstrapping"
+
+### Tienes datos de la altura una muestra de 1000 niños de 6to grado en el país. Te da 1.48m. 
+
+- Quieres evaluar si la media es estadísticamente distinta a 1.5m.
+
+- Para hacer la prueba de hipótesis necesitas la fórmula del error estandar... pero se te olvidó!
+
+### ¿Qué puedes hacer? Bootstrapping al rescate!
+1. Seleccionar una observación, copiarla, y volver a ponerla en la muestra (Selección con reposición).
+2. Repetirlo 999 veces. Resultado: Una nueva base de datos de 1000 niños. Algunas observaciones repetidas.
+3. Tomar la media de los "1000" niños, y copiarla.
+4. Repetir el ejercicio $K$ número de veces (Por ejemplo, si $K$ es 500, tienes 500 bases de datos y 500 medias).
+5. Dibuja el histograma de las 500 medias. Debe distribuirse alrededor de 1.48m. 
+6. Rechaza hipótesis nula de que altura promedio = 1.5m si 1.5m está por arriba del percentil 97.5 de la distribución.
+
+### Se usa en bosques aleatorios (ya vamos a ver) y cuando te preocupan observaciones extremas.
+
+---
+# Bosques Aleatorios: Algoritmo.
+
+### 1. Prepara $K$ muestras aleatorias por la vía del "bootstrapping". 
+### 2. Para cada muestra, fija un arbol de decisión.
+### 3. Para cada observación $i$, genera una predicción desde cada uno de los $K$ árboles de decisión.
+### 4. Predicción del bosque aleatorio para observación $i$: Promedio de las $K$ predicciones.
+
+---
+# Prediciendo movilidad con hogares con % padre/madre solter@
+
+.center[
+<img src="images/rf1.png" width="75%" />
+]
+---
+# Prediciendo movilidad con hogares con padre/madre solter@
+
+.center[
+<img src="images/rf2.png" width="68%" />
+]
+
+---
+# Prediciendo movilidad con hogares con padre/madre solter@
+
+.center[
+<img src="images/rf3.png" width="70%" />
+]
+
+---
+# Prediciendo movilidad con hogares con padre/madre solter@
+
+.center[
+<img src="images/rf4.png" width="70%" />
+]
+
+---
+# Prediciendo movilidad con hogares con padre/madre solter@
+
+.center[
+<img src="images/rf5.png" width="70%" />
+]
+
+---
+# ¿Por qué los bosques aleatorios > árboles de decisión?
+
+- ### Si tomamos una base de datos, la dividimos en dos de forma aleatoria, fijamos árboles a cada una, la forma final del árbol puede ser muy distinta. 
+
+- ### Si el arbol capturase la relación subyacente entre las variables siempre, esto no debería pasar. Esto es muestra de que un arbol de decisión por si solo es muy inestable.
+
+- ### Este problema no lo resuelve la validación cruzada del nivel de profundidad del arbol.
+
+- ### Bosques aleatorios promedia la predicción de muchos árboles distintos. Los ruidos se promedian. Las predicciones entre muestras aleatorias son mucho más estables = Relaciones subyacentes.
+
+- ### Mayor costo computacional. Validación cruzada muy costosa. Límite default: Al menos 5 obs x set.
+
+- ### Promediar modelos distintos se una mucho en ML (Aprendizaje de ensamblaje - "Ensemble learning")
+
+---
+class: center, middle
+
+# Vamo'acelo!
+
+---
+# De regresión a clasificación:
+
+### Hasta ahora hemos estado haciendo ejercicios de "regresión":
+- ### Queremos predecir el valor de una variable resultado continua (Ingresos del hogar).
+
+### ¿Qué pasa si la variable resultado es binaria (Situación de pobreza del hogar)?
+- ### En principio podríamos hacerlo mismo. Predicciones pueden entenderse como probabilidad de 1.
+- ### Problema: Bajo enfoques actuales, predicciones pueden estar fuera del rango [0,1].
+
+### Alternativas:
+- ### Regresión logística (Logit) + penalización Lasso/Ridge | Arbol/RF maximizando entropía.
+- ### Comparar modelos en data de evaluación minimizando errores de clasificación.
+---
+# Errores de clasificación: Precisión y captura (recall)
+### Probabilidad límite XX%: Si probabilidad predicha del modelo > XX%, clasificado como positivo. 
+- **Verdadero positivo**: Clasificaste como positivo y era positivo. Falso positivo: Clasificaste positivo y era negativo.
+- **Verdadero negativo**: Class negativo, era negativo. Falso negativo: Class negativo, era negativo. 
+- **Precisión**: Porcentaje de tus positivos que eran realmente positivos.
+- **Captura (Recall)**: Porcentaje del total de positivos que capturaste con tus positivos. 
+- Figura: Rectángulo gris son las predicciones positivas, puntos grises son los positivos reales. 
+.center[
+<img src="images/class1.png" width="40%" />
+]
+--
+- Pregunta: ¿Cómo cambian la precisión y la captura en la medida de que la probabilidad límite sube?
+---
+# Curvas "ROC" (Tasas de Verd. + y Falso +), y Area bajo la curva. 
+
+.center[
+<img src="images/class2.png" width="60%" />
+]
+
+---
+# Curvas de precisión y captura, y Area bajo la curva.
+
+.center[
+<img src="images/class3.png" width="57%" />
+]
+---
+# ¿Cómo decidir entre modelos? Mayor area bajo la curva (¿Cuál?)
+
+.pull-left[
+### Curvas ROC cuando hay balance (%+ ~ 50%)
+.center[
+<img src="images/class4.jpeg" width="75%" />
+]
+]
+.pull-right[
+### Curvas P/R cuando desbalance (%+ != 50%)
+.center[
+<img src="images/class5.png" width="100%" />
+]
+]
+---
+class: center, middle
+
+# Ejercicio de clasificación.
+---
+class: center, middle
+
+# Gracias

@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Introducción a la Inferencial Causal - Clase 12</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Jose Morales-Arilla y Carlos Daboín" />
+    <link href="Clase12_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="Clase12_files/remark-css-0.0.1/tamu.css" rel="stylesheet" />
+    <link href="Clase12_files/remark-css-0.0.1/tamu-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+
+layout: true
+background-image: url(images/ucab.png)
+background-position: 100% 0%
+background-size: 5%
+---
+class: inverse, center, middle
+# Causalidad - Clase 12
+
+## José Morales-Arilla y Carlos Daboín
+
+#### Universidad Católica Andrés Bello 
+#### Julio, 2022
+
+
+
+---
+# ¿Qué aprendimos la clase pasada? 
+
+- ### Todo es data
+
+- ### Data geoespacial: Puntos, lineas, polígonos, "grids".
+  
+- ### Data de texto: Conteo de palabras, sentimiento de las frases, etc.
+  
+- ### Data de redes: Diferentes intensidades en las relaciones entre todos los individuos. 
+  
+- ### Causalidad + Machine Learning + Manejo de datos + Fundamento teórico = Economista empírico!
+  
+---
+# Esta clase es sobre cinco temas:
+
+### Tema 1: La decisión de protestar (RCTs x 2)
+
+### Tema 2: Comunicaciones y eficiencia (Efectos visuales)
+
+### Tema 3: La niebla de la guerra (IV + RDD)
+
+### Tema 4: La linea editorial de los medios de comunicación (Diff-in-Diff x 2)
+
+### Tema 5: Violencia y comercio en México (RDD Electoral + Shift-Share IV)
+
+---
+class: center, middle
+
+# La decisión de protestar
+
+---
+# ¿Qué factores toman en cuenta antes de ir a protestar?
+
+---
+# Si tu sabes que va a ir más gente a protestar...
+
+### Hay motivos para ahora si querer ir a protestar.
+- ### Menos riesgo, más chévere.
+- ### Esto haría que la participación de otros sea un **complemento** para mi participación.
+
+--
+
+### Hay motivos para ahora no querer ir a protestar.
+- ### Yo no hago la diferencia, o a lo mejor ahora que la protesta es grande si van a reprimir.
+- ### Esto haría que la participación de otros sea un **sustituto** para mi participación.
+
+--
+
+### ¿Qué canales son más importantes? Pregunta empírica para un contexto específico. 
+
+---
+# Cantoni, Yang, Yuchtman y Zhang (QJE, 2019)
+
+### Hasta hace poco, todos los 1 de julio se hacían protestas pro-democracia en Hong Kong.
+.center[
+&lt;img src="images/prot1.jpeg" width="55%" /&gt;
+]
+---
+# Cantoni, Yang, Yuchtman y Zhang (QJE, 2019)
+
+### Los autores buscan estudiantes universitarios antes de la protesta de 2016, y le preguntan a cada uno:
+1. Si van a ir a la marcha.
+2. Que proporción de los estudiantes creen que va a ir a la marcha.
+
+### Con las respuesta a la pregunta 1 pueden calcular la proporción de estudiantes que irá a la marcha.
+
+### Aleatoriamente deciden revelarle a algunos estudiantes esa información un día antes de la marcha.
+- Si en la pregunta 2 predijiste más del valor real, tu creencia sobre la participación se actualizó a la baja.
+- Si en la pregunta 2 predijiste menos del valor real, tu creencia sobre la participación se actualizó a la alza.
+- Hay personas con el mismo grado de subestimación o sobreestimación que no recibieron la información (control).
+
+### Pregunta de investigación: ¿Cuál es el efecto de una actualización al alza de las creencias de partipación?
+- Sobre la creencia actualizada de participación, pero más importante, sobre la participación efectiva en la marcha.
+---
+# Cantoni, Yang, Yuchtman y Zhang (QJE, 2019)
+
+.center[
+&lt;img src="images/prot6.png" width="60%" /&gt;
+]
+
+---
+# Cantoni, Yang, Yuchtman y Zhang (QJE, 2019)
+
+.center[
+&lt;img src="images/prot2.png" width="60%" /&gt;
+]
+---
+# Cantoni, Yang, Yuchtman y Zhang (QJE, 2019)
+
+.center[
+&lt;img src="images/prot3.png" width="90%" /&gt;
+]
+---
+# Cantoni, Yang, Yuchtman y Zhang (QJE, 2019)
+
+.center[
+&lt;img src="images/prot4.png" width="63%" /&gt;
+]
+---
+# Resultados: Participación de otros ¿Complemento o sustituto?
+
+.center[
+&lt;img src="images/prot5.png" width="60%" /&gt;
+]
+
+---
+# Bursztyn, Cantoni, Yang, Yuchtman y Zhang (AERI, 2020)
+
+### ¿Cuál es el efecto de participar en una protesta sobre la participación en protestas futuras?
+
+### ¿Cuál es el efecto de que en esa protesta a la que fuiste estuviste con tus panas?
+
+### Un año después del experimento previo, hicieron otro experimento en la misma universidad.
+
+### Aleatoriamente asignaron un incentivo económico a participar en la protesta de 2017. Dos niveles:
+- "Celdas" de participación (Cohorte/Carrera) aleatoreamente asignadas a un % en el grupo de tratamiento.
+- A lo interno de la "celda", que estudiantes quedaban asignados al grupo de tratamiento fue aleatorio.
+- Tratados en "celdas" con altas proporciones participaron y sus panas participaron.
+- Tratados en "celdas" con bajas proporciones participaron, pero menos panas participaron.
+
+### ¿Cuál fue el efecto de participar en 2017 sobre la participación en 2018? ¿Será este efecto distintos para aquellos que participaron con muchos de sus panas de "celda"?
+
+---
+# Bursztyn, Cantoni, Yang, Yuchtman y Zhang (AERI, 2020)
+
+.center[
+&lt;img src="images/prot7.png" width="60%" /&gt;
+]
+
+---
+# Bursztyn, Cantoni, Yang, Yuchtman y Zhang (AERI, 2020)
+
+.center[
+&lt;img src="images/prot8.png" width="80%" /&gt;
+]
+
+---
+# Bursztyn, Cantoni, Yang, Yuchtman y Zhang (AERI, 2020)
+
+.center[
+&lt;img src="images/prot9.png" width="80%" /&gt;
+]
+
+---
+# ¿Cuál es el efecto de marchar con más panas en 2017, en 2018?
+
+.center[
+&lt;img src="images/prot10.png" width="70%" /&gt;
+]
+
+---
+# ¿Qué sugieren los RCTs sobre la decisión estratégica de protestar?
+
+1. ### La decisión de protestar pareciese ser un sustituto estratégico a la participación de los demás.
+  - ### ¿Más gente va a protestar de la que creía? Menos probable que vaya.
+  - ### ¿Menos gente va a protestar de la que creía? Más probable que vaya.
+
+2. ### La decisión de protestar pareciese ser un complemento estratégico a la participación de los panas.
+  - ### El haber marchado con panas en el pasado hace que quieras marchar más en el futuro. 
+
+---
+class: center, middle
+
+# Comunicaciones y eficiencia
+
+---
+# Comunicación `\(\to\)` Arbitraje `\(\to\)` Eficiencia
+
+### En teoría, la integración de los mercados genera beneficios económicos.
+
+- ### Dos ciudades en cada rivera de un río: Construir un puente les permite comerciar y especializarse.
+
+- ### Dos países en cada lado de un oceano: Emails `\(\to\)` Flujo de bienes, conocimiento, tecnología, capital.
+
+- ### Cacaoteros: Celulares `\(\to\)` Información sobre precios `\(\to\)` Menos manipulación de intermediadores.
+
+--
+
+### Todo esto que se espera en teoría... ¿En verdad se ve en la práctica?
+
+---
+# Jensen (QJE, 2007)
+
+### Efecto de la tecnología celular en Kerala (India) sobre la dispersión de precios de los pescados.
+- ### Celulares introducidos entre 1997 y 2001 en distintas partes del estado. 
+- ### Kerala es una región pesquera del país.
+- ### Celulares pasaron a ser utilizados por los pescadores y los mayoristas al mismo tiempo. 
+
+### Fuente de datos: Encuesta de pescadores realizada constantemente antes y después del los celulares.
+
+### Pregunta: ¿Cuál fue el efecto de los celulares sobre la dispersión de precios reportados por pescadores?
+
+---
+# Jensen (QJE, 2007)
+
+.center[
+&lt;img src="images/tec1.png" width="45%" /&gt;
+]
+
+---
+# Jensen (QJE, 2007)
+
+.center[
+&lt;img src="images/tec2.png" width="65%" /&gt;
+]
+
+---
+# ¿Qué sugiere este resultado? Implícitamente, ¿Qué método usa?
+
+.center[
+&lt;img src="images/tec3.png" width="63%" /&gt;
+]
+
+---
+# Steinwender (AER, 2018)
+
+### La integración de mercados a través de tecnologías de telecomunicación no arrancó con el celular.
+
+### Comercio de algodón entre Nueva York y Liverpool hasta el 28 de julio de 1866:
+- ### Hacienda en Georgia `\(\to\)` Trader NY `\(\to\)` Trader LV `\(\to\)` Textilera Manchester.
+- ### Trader NY define precio prediciendo demanda en LV 10 días después (Cuando llegue el barco).
+
+--
+
+### 28 de julio de 1866: Conexión entre Nueva York y Liverpool a través del **telegrama**.
+- ### Trader NY define precio con información en tiempo real de las condiciones de mercado en destino.
+
+--
+
+### ¿Cuál fue el efecto de la introducción del telegrama sobre la dispersión de precios del algodón?
+
+---
+
+.pull-left[
+# Antes del telegrama:
+# Precio se adapta a lo que diga el señor que acaba de llegar a Nueva York desde Liverpool.
+]
+
+.pull-right[
+.center[
+&lt;img src="images/tec4.png" width="90%" /&gt;
+]
+]
+---
+# Diferencia de precios entre NY y LV antes y después del telegrama.
+
+.center[
+&lt;img src="images/tec5.png" width="70%" /&gt;
+]
+
+---
+# ¿Qué aprendemos de estos dos papers?
+1. ### Que las tecnologías de comunicación habilitan la "ley de un solo precio".
+  - ### Como sugiere la teoría: Información `\(\to\)` Arbitraje `\(\to\)` Eficiencia. 
+
+2. ### Que no hay nada más poderoso en una investigación empírica que un "killer graph".
+  - ### En sus proyectos finales: ¿Cuál podría ser su visualización o figura principal?
+  - ### Si pudieran resumir las conclusiones de su investigación en una sola imagen, ¿Cuál sería?
+
+---
+class: center, middle
+
+# La niebla de la guerra
+
+---
+# Gagliarducci, Onotaro, Sobbrio y Tabellini (AEJ - Applied, 2018)
+
+### Los golpes de estado arrancan tomando la TV y la Radio. ¿Por qué?
+
+- ### La resistencia a regímenes opresivos enfrenta serios problemas de coordinación.
+- ### Nadie quiere salir si nadie sale, nadie quiere no salir si todos salen. 
+
+### Medios de comunicación pueden ayudar a resolver esos problemas de coordinación.
+- ### Evidencia reciente de relación entre redes sociales y protestas.
+- ### Problema de identificación: + Medios &lt;- + Capacidad represiva del régimen -&gt; - Protesta
+
+### ¿Cómo identificar (instrumentar) variación exógena en presencia de medios?
+
+---
+# Gagliarducci, Onotaro, Sobbrio y Tabellini (AEJ - Applied, 2018)
+
+### Caso de estudio: Programas en italiano de la BBC `\(\to\)` Resistencia contra los Nazis (1943-45).
+
+### Sur de Italia liberado por los aliados en 1943. Lucha por centro y norte hasta el final de la guerra. 
+
+### Así como en Francia, las tropas aliadas contaban con apoyo de movimientos de resistencia insurgente.
+
+### Insurgentes contra Mussolini: Crecimiento &gt; x10 entre Sept. 1943 a Sept. 1944. 
+
+### Radio Londra (BBC en Italiano) desde UK hasta Italia: Noticias, propaganda, mensajes encriptados.
+
+---
+# Gagliarducci, Onotaro, Sobbrio y Tabellini (AEJ - Applied, 2018)
+
+.pull-left[
+### Señal se transmite por rebote en la ionosfera
+.center[
+&lt;img src="images/war1.png" width="100%" /&gt;
+]
+]
+
+.pull-right[
+### Manchas solares afectan la ionosfera.
+.center[
+&lt;img src="images/war2.png" width="85%" /&gt;
+]
+]
+
+---
+# Gagliarducci, Onotaro, Sobbrio y Tabellini (AEJ - Applied, 2018)
+### `\(BBC_{i,t}\)`: Alcance simulado de la BBC en el municipio `\(i\)` en el mes `\(t\)`.
+- ### `\(BBC_{i,t} = \underbrace{BBC_i}_{\text{Alcance antenas por muni}} * \underbrace{Mancha_t}_{\text{Manchas solares por mes}} * \underbrace{Noche_{i,t}}_{\text{Horas nocturnas}}\)`
+
+### `\(NK_{i,t}\)`: Episodios de violencia Nazi contra insurgentes de la resistencia. 
+- ### No hay data de membresía de la resistencia por municipio/mes.
+- ### Pero más reacción Nazi debe ser porque los insurgentes actuaron (más probable que los agarren).
+- ### Para validar, evaluan efectos sobre violencia *racial* Nazi y efectos de señal de radio fascista.
+
+---
+# Gagliarducci, Onotaro, Sobbrio y Tabellini (AEJ - Applied, 2018)
+### Cambio mes a mes de la señal de la BBC por municipio.
+.center[
+&lt;img src="images/war3.png" width="60%" /&gt;
+]
+
+---
+# Gagliarducci, Onotaro, Sobbrio y Tabellini (AEJ - Applied, 2018)
+### Cambio mes a mes de la violencia Nazi contra la insurgencia por municipio.
+.center[
+&lt;img src="images/war4.png" width="60%" /&gt;
+]
+
+---
+# Estrategia empírica:
+
+### `$$NK_{it}=\alpha + \beta BBC_{it}+X_{it}*\gamma + \rho_i + \delta_t + \epsilon_{it}$$`
+
+### Supuesto de identificación: 
+- ### Tras controlar por efectos fijos de municipio y mes, los cambios en el alcance de la señal de la BBC... 
+- ### ...entre meses a lo interno de cada municipio solo se deben a las manchas solares...
+- ### ...que son exógenas a cualquier cosa que esté pasando en la tierra.
+
+### El alcance simulado de la BBC es un buen instrumento de la señal de la BBC condicional en efectos fijos.
+- ### Lógica de variables instrumentales + Cerrar puertas traseras en datos de panel con efectos fijos.
+
+---
+# Resultados principales:
+
+.center[
+&lt;img src="images/war5.png" width="60%" /&gt;
+]
+
+### Aumento de 10% en señal de la BBC `\(\to\)` Aumentos de 113% en violencia contra insurgentes.
+
+---
+# Resultados principales:
+
+.center[
+&lt;img src="images/war6.png" width="50%" /&gt;
+]
+
+### Placebos: Señal en el mes posterior no afecta, Eventos de violencia racial no afectados. 
+### Otros: Complementariedad con otras actividades, efectos no lineales, radios fascistas nulas.
+
+---
+# Gagliarducci, Onotaro, Sobbrio y Tabellini (AEJ - Applied, 2018)
+
+### Conclusiones sustantivas:
+- ### Ante problemas de coordinación, acceso a información útil `\(\to\)` acción de insurgencia.
+
+### Conclusiones metodológicas:
+- ### Variables instrumentales con cierre de puertas traseras en datos de panel vía efectos fijos.
+- ### No tienen señal efectiva de la BBC, solo la señal simulada (el instrumento).
+- ### Eso significa que el resultado que tenemos está en "forma reducida".
+- ### Si tu estrategia se basa en un instrumento, tiene que ser implausible que el éste afecte por otra vía distinta a la teoría que tienes en mente. Por esa razón, los instrumentos buenos suelen ser raros.
+
+---
+# Dell y Querubin (QJE, 2017) - Mi paper favorito del mundo mundial.
+
+### ¿Se puede estimular un sentido de nación distinto desde la intervención extranjera? ¿Cómo?
+- ### Ganándote el corazón y la mente ("hearts and minds") con inversión en desarrollo.
+- ### A plomo limpio ("get the people by the balls and their hearts and minds will follow").
+
+### Si la estrategia sirve, la gente debe dejar de creer en tu enemigo y empezar a creer en ti.
+- ### "Never before did the people of Vietnam, from top to bottom, unite as they did during the years that the U.S. was bombing us. Never before had Chairman Ho Chi Minh’s appeal—that there is nothing more precious than freedom and independence—gone straight to the hearts and minds of the Vietnamese people." (Tran Quang Co)
+
+### ¿Qué podemos aprender al respecto desde el caso de la Guerra de Vietnam (Foco en Vietnam del Sur)?
+
+---
+# Dell y Querubin (QJE, 2017)
+### Estrategias distintas de distintos componentes de las fuerzas armadas de EEUU.
+- ### Fuerza Aerea: Bombardeos basados en predicción de presencia de VietCong (VCs - Guerrilleros).
+- ### Ejército: A plomo limpio, pero desde tierra.
+- ### Marines: Estrategia tipo "Hearts and Minds" - Acercamiento a poblaciones e inversión en desarrollo.
+
+### Este paper tiene dos (2) estrategias espectaculares de regresión de discontinuidad:
+1. ### Discontinuidad en regla de asignación de bombardeos por parte de la Fuerza Aerea.
+2. ### Discontinuidad espacial en segmentación del territorio bajo control del Ejército vs. Marines.
+
+---
+# Estrategia 1: Asignación de Bombardeos
+
+### Robert McNamara: Metiéndole tecnocracia a la política pública (y bélica) de EEUU.
+.center[
+&lt;img src="images/war7.png" width="70%" /&gt;
+]
+
+---
+# Estrategia 1: Asignación de Bombardeos
+
+.pull-left[
+### Super-Computadora IBM 360
+.center[
+&lt;img src="images/war8.png" width="100%" /&gt;
+]
+]
+
+.pull-right[
+### Redondeando resultados para asignar prioridad
+.center[
+&lt;img src="images/war9.png" width="70%" /&gt;
+]
+]
+
+---
+# Estrategia 1: Asignación de Bombardeos
+.center[
+&lt;img src="images/war10.png" width="70%" /&gt;
+]
+
+- ### `\(Y_{h,t+n}\)`: Bombardeos en la villa (hamlet) `\(h\)` en el trimestre `\(t\)`. 
+- ### `\(below_{h,t}\)`: Indicador de estar en la parte "mala" de la discontinuidad más cercana.
+- ### `\(D_{htd}\)`: Indicador de discontinuidad más cercana |  `\(dist_{ht}\)`: Distancia en puntaje a `\(D\)`.
+- ### Cuatro discontinuidades en una, nos interesa el efecto de estar "por debajo" de cualquiera `\(\to\)` `\(\gamma_1\)`!
+
+---
+# Bombardeos exógenos `\(\to\)` Más VietCongs después!
+
+.pull-left[
+### Clases prioritarias `\(\to\)` Bombardeos
+.center[
+&lt;img src="images/war11.png" width="100%" /&gt;
+]
+]
+
+.pull-right[
+### Clases prioritarias `\(\to\)` Más guerrilleros
+.center[
+&lt;img src="images/war12.png" width="100%" /&gt;
+]
+]
+
+---
+# Bombardeos `\(\to\)` Terrorismo y reclutamiento VC + desprotección
+.center[
+&lt;img src="images/war13.png" width="60%" /&gt;
+]
+---
+# Bombardeos `\(\to\)` Subdesarrollo a largo plazo
+
+.pull-left[
+### Menos participación política
+.center[
+&lt;img src="images/war14.png" width="95%" /&gt;
+]
+]
+
+.pull-right[
+### Menos escuelas
+.center[
+&lt;img src="images/war15.png" width="95%" /&gt;
+]
+]
+---
+# Represión del ejército vs. Inversión de Marines
+.center[
+&lt;img src="images/war16.png" width="55%" /&gt;
+]
+
+---
+# Represión del ejército vs. Inversión de Marines
+### `$$Y_{hs} = \alpha_0 + \alpha_1*Marines_{hs}+f(lat_{hs},lon_{hs})+\beta G_{hs} + \alpha_s + \epsilon_{hs}$$`
+
+### Donde:
+- ### `\(Y_{hs}\)`: Variable de resultado en la villa `\(h\)` del segmento de la discontinuidad `\(s\)`. 
+- ### `\(Marines_{hs}\)`: Indicador de que la villa `\(h\)` está del lado de los Marines ("Hearts and minds").
+- ### `\(f(lat_{hs},lon_{hs})\)`: Control polinómico por la distancia de villa `\(h\)` a la discontinuidad.
+- ### `\(G_{hs}\)`: Controles a nivel de la villa `\(h\)`. | `\(\alpha_s\)`: Efecto fijo por segmentos de la discontinuidad. 
+
+---
+# Marines: Más salud y educación
+.center[
+&lt;img src="images/war17.png" width="85%" /&gt;
+]
+---
+# Marines: Menos VietCongs
+.center[
+&lt;img src="images/war18.png" width="85%" /&gt;
+]
+---
+# Marines: Opinión pública en favor de EEUU
+.center[
+&lt;img src="images/war19.png" width="85%" /&gt;
+]
+---
+# Marines: Opinión pública en favor del gobierno de Vietnam del Sur
+.center[
+&lt;img src="images/war20.png" width="85%" /&gt;
+]
+
+---
+# ¿Qué aprendemos de este espectacular paper?
+
+### La estrategia de construir naciones a punta de plomo no pareciera ideal.
+- ### Increíblemente costosa, sorprendentemente contraproducente (Bombardeos)
+
+- ### Estrategia de inversión en desarrollo pareciera más prometedora (Marines)
+
+### En términos metodológicos:
+- ### Hay muchas discontinuidades en el mundo, solo tienes que estar pendiente! 
+- ### Estrategia de discontinuidad en bombardeos: Lo más cool que yo conozco en el mundo de RDD.
+- ### Discontinuidades espaciales: Estrategia muy común en historia económica (Dell, ECMA 2010).
+- ### Melissa Dell es probablemente la profesora más cool del mundo. Checkéense su trabajo!
+
+---
+class: center, middle
+
+# Gracias
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

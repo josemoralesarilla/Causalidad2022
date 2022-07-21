@@ -1,5 +1,5 @@
 ---
-title: "Introducción a la Inferencial Causal - Clase 12"
+title: "Introducción a la Inferencial Causal - Clase 13"
 author: "Jose Morales-Arilla y Carlos Daboín"
 date: "7/21/2022"
 header-includes:
@@ -31,7 +31,7 @@ background-position: 100% 0%
 background-size: 5%
 ---
 class: inverse, center, middle
-# Causalidad - Clase 12
+# Causalidad - Clase 13
 
 ## José Morales-Arilla y Carlos Daboín
 

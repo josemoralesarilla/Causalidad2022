@@ -84,6 +84,6 @@ Si bien invitamos la colaboración entre estudiantes, cada estudiante debe entre
 ###	Bloque 5: Discusión de la literatura empírica
 -	Clase 13 – 21/07/2022: Revisión de literatura empírica <a href="Clase13/Clase13.html" title="[Slides]">[Slides]</a>
 -	Clase 14 – 28/07/2022: Invitados especiales
--	Clase 15 – 04/08/2022: Presentación de los estudiantes
+-	Clase 15 – 04/08/2022: Presentación de los estudiantes <a href="Clase15/Clase15.html" title="[Slides]">[Slides]</a>
 -	Fecha entrega proyecto final: 11/08/2022
 

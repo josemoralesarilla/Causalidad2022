@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Introducción a la Inferencial Causal - Clase 15</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Jose Morales-Arilla y Carlos Daboín" />
+    <link href="Clase15_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="Clase15_files/remark-css-0.0.1/tamu.css" rel="stylesheet" />
+    <link href="Clase15_files/remark-css-0.0.1/tamu-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+
+layout: true
+background-image: url(images/ucab.png)
+background-position: 100% 0%
+background-size: 5%
+---
+class: inverse, center, middle
+
+# Causalidad - Clase 15
+
+## José Morales-Arilla y Carlos Daboín
+
+#### Universidad Católica Andrés Bello 
+#### Agosto, 2022
+
+
+
+---
+# ¿Qué aprendimos en esta clase? 
+
+1. ### Problema fundamental de la inferencia causal: Los contrafactuales individuales no se ven.
+
+--
+
+2. ### Si la variación en `\(X\)` es exógena: `\(X \sim Y = X \to Y\)` para el individuo promedio.
+
+--
+
+3. ### Evidencia experimental: Crear tu propia data en la que garantizas que la variación de `\(X\)` es exógena.
+
+  - #### Validez interna garantizada, a veces a costa de la validez externa.
+
+--
+
+4. ### Evidencia cuasi-experimental: Analizar data que ya existe bajo "supuestos de identificación".
+  
+  - #### Pueden existir "puertas traseras" en la relación observada entre `\(X\)` y `\(Y\)`.
+
+--
+
+5. ### Alternativa cuasi-experimental 1: Cerrar puertas traseras bajo el supuesto de un "modelo" (DAG).
+
+  - ####  Sección cruzada: Controlar + Matching | Datos de panel: Efectos fijos.
+  
+---
+# ¿Qué aprendimos en esta clase? 
+
+5. ### Alternativa cuasi-experimental 2: Aislar variación exógena en la causa de interés.
+
+--
+
+6. ### Variables instrumentales: Deben ser "relevantes" y cumplir con la "restricción de exclusión".
+  - #### `\(Z\)` se relaciona con `\(X\)`, y solo puede asociarse con `\(Y\)` a través de `\(X\)`. Instrumentos creíbles tienden a ser raros.
+
+--
+
+7. ### Regresión de discontinuidad: Lo único que brinca en el límite de la variable de asignación es `\(X\)`.
+  - #### Si con el brinco de `\(X\)` también hay un brinco de `\(Y\)`, es por el efecto causal de `\(X\)` sobre `\(Y\)`. 
+
+--
+
+8. ### Diferencia en diferencias: `\(X\)` no es exógeno, pero hay datos previos al tratamiento.
+  - #### Tendencias paralelas: Evaluarlas antes del tratamiento, suponerlas después del tratamiento.
+  - #### STP: Otros efectos del tiempo sobre `\(Y\)` son independientes de `\(X\)` (En promedio afectan a todos por igual).
+  
+---
+# ¿Qué aprendimos en esta clase? 
+
+9. ### Controles sintéticos: Construir un contrafactual que represente al caso de estudio pre-tratamiento.
+  - #### Usualmente, solo un "individuo" es tratado. Individuos "donantes" nunca deben ser tratados. 
+  - #### Efecto: Distancia post-tratamiento entre el individuo y su versión sintética ( `\(\approx 0\)` para otros individuos).
+
+--
+
+10. ### Machine Learning: Robándole métodos a los computines cuando lo que nos interesa es predecir bien.
+  - #### La predictibilidad que nos importa es *fuera de muestra*: sobre datos que el modelo no ha visto aún.
+  - #### Complejidad de los modelos: Muy poca y no capturas señal. Demasiada y capturas puro ruido ("sobreajuste").
+  - #### Validación cruzada para "entonar" modelos, comparar en data de evaluación para elegir modelos.
+  - #### Modelos ML lineales: Lasso, Ridge | Modelos ML no-lineales: Árboles de decisión, bosques aleatorios.
+  - #### Problemas de regresión ( `\(Y\)` es continua) vs. Problemas de clasificación ( `\(Y\)` es discreta, usualmente binaria).
+
+---
+# ¿Qué aprendimos en esta clase? 
+
+11. ### Todo es data: Mapas, texto, imágenes, etc.
+  - #### Análisis geo-espacial, análisis de redes, extraer data de API de Twitter... Lo que se puede hacer acá es infinito.
+
+--
+  
+12. ### Papers cool: Tanto experimentales como cuasi-experimentales.
+  - #### RCTs: Bertrand y Mullainathan (2004), Yang et al (2019, 2020).
+  - #### IV: Autor et al. (2013), Gagliarducci et al. (2018).
+  - #### RDD: Dell y Querubín (2017).
+  - #### Diff-in-Diff: Bahar et al (2019).
+  - #### Synthetic controls: Abadie et al (2003, 2010).
+  
+---
+# Si hay una sola cosa que se van a llevar de la clase...
+
+### Problema fundamental de la inferencia causal:
+- #### "No se puede observar lo que le hubiera pasado a un individuo tratado si no lo hubieras tratado".
+
+--
+
+### Como economistas y como científicos, nos interesan los efectos causales *promedio*.
+- #### La vacuna sobre probabilidad de hospitalización | Nombre afroamericano sobre la probabilidad de que te llamen.
+- #### Cigarrillo sobre probabilidad de tener cancer | Sequías sobre la probabilidad de una guerra civil. 
+
+--
+
+### Como individuos, a la hora de tomar decisiones, nos interesa el efecto de esa decisión sobre nosotros.
+  - #### ¿Será que estudio economía? | ¿Será que le pido matrimonio a la chamyta? | ¿Será que me voy del país?
+  - #### ¿Será que renuncio al trabajo? | ¿Será que hago el doctorado? | ¿Será que me meto en política? | ¿Será que...?
+  
+---
+# Del "¿Cuál es el efecto promedio de...?" al "¿Será que...?"
+
+### En Medicina hay una diferencia muy clara entre investigación básica y diagnóstico clínico:
+- #### Investigación: ¿Cuál es el efecto promedio de la vacuna? | Diagnóstico: ¿Debería darle la vacuna a esta persona?
+
+--
+
+### Preguntas del tipo "¿Será que...?" son más parecidas al diagnóstico que a la investigación.
+- #### La investigación es para avanzar el conocimiento, evaluando los fenómenos de manera precisa y aislada.
+- #### El diagnóstico es para tomar decisiones en contextos complejos e inciertos, y con un objetivo normativo claro.
+
+--
+
+### ¿Cómo hacer buenos diagnósticos y tomar buenas decisiones? No ves (ni verás) el contrafactual, pero...
+- #### ...con objetivos claros y una teoría sobre costos y resultados validada con investigación y tus observaciones...
+- #### ...puedes tomar una decisión - y revisar tus creencias y decisiones mientras aprendes de ir haciendo cosas.
+
+---
+# Si tienes dudas, el autor de Freakonomics dice que te [arriesgues](https://watermark.silverchair.com/rdaa016.pdf?token=AQECAHi208BE49Ooan9kkhW_Ercy7Dm3ZL_9Cf3qfKAc485ysgAAAtwwggLYBgkqhkiG9w0BBwagggLJMIICxQIBADCCAr4GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMhvCuJV8I3T5t2lWLAgEQgIICj04scFKayQcbLymPl-_SGf_5cTIp8qg00InlQO7-hSSDjcWh2fjwvL2MeovF2yWhvfMPaV3jXnxfAItUsb8ue6G5FUILKZl74ELUipEazX-7lrm3g3uHlfkUWMnskYfcyAXIwfPbPMkNnYHRUSScEAVkjob3JAU_SkMpCeoD7U8xYXc_AxO9bZm7oJanZDi2IhGvNwPBHXw8h-wUgllUET21z5utlr7XBj8EzZhlawbTu2gZkp5VPFf6bBoOUGgAeSZDYKFQX4wNpBGuzq7ADWqcQxRMteHi4NJHZnwL11d3sdXyrY_wwrLUl5oJXpnBIqEbB_Z0vhIVZ2lh0i8O4VgamSJ0ilXBkcuvnmz8pdRr72VXc2d7yboj5mbIjSZRBtmFvfmtswlpeFYQxGqgXLDkc3TiEkI0pEnkvAx_vYjTI8A0M9rphJogEMViaK0EkYOMPyjqefhaD9HK4Y8p3MGto6S6-qaL1k_n5vodE0J96PU_N9Jy6TbFTLO-ekmFSmq4S4dNm1oZRU0LFxiPoZHwkBbw4fnDUmifE6eZdt1eXsRT-2E6e46CPd4IMNvOgbhBz2CTB0PPm7ECQTg5hmY7zNvfbUmBIg11A_yhj4pqTRZDGJemmoKsUETsSObA72TvV_lcC2EOLK-gVLKChdipqJPc1BPECWbvBRPUWG93ih8Y3YBK2mDclns35YJob8nQDotZjotRC7XbD33LNjOvnrv7ZXv9vjNPcizFIxxmXu_rQ6JwoX-fYD2u7JaQJfYPfvaqfjaw6g1ojlqu4OKjkumAQSauwccZX-ZntEh9fn9qGErwJhIIq2GNIxw4X4wa8BcVaERWdVTzmXacRaFRCLg5FmZVYmChci_m4Jw)!
+
+.center[
+&lt;img src="images/levitt3.png" width="59%" /&gt;
+]
+
+---
+# "Chamo, ¿Será que enseñamos un curso de causalidad en la UCAB?"
+
+### ¿Será que alguien agarra este curso y lo replica el semestre/año que viene?
+
+--
+
+### Si bien por la plata no sería, hay muchas razones estratégicas para enseñar.
+- #### Identificar talento, crear reputación, construir curriculum, hacer redes, desarrollar materiales para futuras clases...
+
+--
+
+### Creo que las principales razones no son estratégicas (en un sentido tradicional):
+
+  1. ### Devolver lo recibido sirviendo a las nuevas generaciones.
+  2. ### Contribuir al país cuando otras puertas están cerradas.
+  3. ### y... ¿ya?
+
+---
+# Zambrano lo dijo mejor hace 10 años.
+
+.center[
+&lt;img src="images/fin4.png" width="100%" /&gt;
+]
+
+---
+class: center, middle
+
+# Manténganse en contacto.
+
+--
+
+
+# Cuenten con nosotros.
+
+--
+
+
+# Un fuerte abrazo desde Princeton y Buenos Aires!
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

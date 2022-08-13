@@ -1,0 +1,2163 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Semana 01 - code sessions</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Carlos Daboín" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Semana 01 - code sessions
+## Intorduccion a R, Rstudio y el paquete tidyverse
+### Carlos Daboín
+### April, 2022
+
+---
+
+
+&lt;style&gt;
+.inverse, .hljs-github {
+  background-image: url(images/ucab.png);
+  background-position: 100% 0%;
+  background-size: 5%;
+}
+
+.remark-inline-code {
+    font-size: var(--code-inline-font-size);
+    color: #272727;
+    background: #f0f0f0;
+}
+
+.left-threeway {
+  width: 31%;
+  float: left;
+  padding-right: 1%;
+  padding-left: 1%;
+}
+
+.center-threeway {
+  width: 31%;
+  float: left;
+  padding-right: 1%;
+  padding-left: 1%;
+}
+
+.right-threeway {
+  width: 31%;
+  float: left;
+  padding-right: 1%;
+  padding-left: 1%;
+}
+&lt;/style&gt;
+
+
+
+
+
+
+
+&lt;!-- ### Taller 1: R y Rstudio y tidyverse en el analisis de datos --&gt;
+
+&lt;!-- -	Breve introducción a R y Rstudio.  --&gt;
+&lt;!-- -	Preparación y análisis de datos con tidyverse. --&gt;
+&lt;!--   -	Lo básico: Funciones, librerías y el tidyverse. --&gt;
+&lt;!--   -	Dplyr en acción: Operaciones comunes en el análisis de datos. --&gt;
+&lt;!--     -	Select y rename: Selecciona y ordena las variables de tu interés, aprovecha y cambia los nombres. --&gt;
+&lt;!--     -	Mutate y Summarize: Crea nuevas variables, Cambia la escala de las variables de tu interés (eleva al cuadrado, aplica logaritmos, estandariza las variables). --&gt;
+&lt;!--     -	Filter y group_by: Realiza tus cálculos sobre miembros de grupos específicos. --&gt;
+&lt;!-- -	Visualizacion de datos con ggplot2. --&gt;
+&lt;!--   -	Importancia de la visualización de datos. --&gt;
+&lt;!--   -	The grammar of graphics. --&gt;
+&lt;!--   -	Distribución de frecuencias y función de densidad (geom_density), geom_col, geom_boxplot, geom_point). --&gt;
+&lt;!--   -	Distribucion normal y distribucion log normal (TE ch3). --&gt;
+&lt;!--   -	Visualizando una distribucion condicional. --&gt;
+&lt;!--   -	Visualizando la relación de dos variables continuas. --&gt;
+
+&lt;!-- --- --&gt;
+
+
+&lt;!-- ### Taller 2: R para el análisis de regresión --&gt;
+&lt;!-- -	Tidyr al rescate: Siempre tendremos que hacer algo de limpieza antes de comenzar  --&gt;
+&lt;!--     -	Pivot_wider y pivot_longer: Asegurate de que tus datos estén en formato tidy. --&gt;
+&lt;!--     -	Joins: Junta datos provenientes de fuentes diferentes. --&gt;
+&lt;!-- - Programando regresiones e interpretando outputs  --&gt;
+&lt;!--   - Intro: Trazando una línea de regresión minimizando los errores cuadrados (mostrar como replican los promedios condicionales de la semana pasada).        --&gt;
+&lt;!--   - ¿Cómo programar una regresión? --&gt;
+&lt;!--   - Paquetes para el análisis de regresiones. --&gt;
+&lt;!-- 	  - library(broom) y library(modelr) --&gt;
+&lt;!--   - Interpretando coeficientes, errores standard --&gt;
+&lt;!--   - Sum of Squared Errors, R cuadrado, F statistic. --&gt;
+&lt;!--   - Transformación de variables y modelos no lineales --&gt;
+&lt;!-- -	 Transformaciones logaritmicas (TE ch13). --&gt;
+&lt;!--   -	Polinomios (TE ch13). --&gt;
+&lt;!--   -	Interacciones (TE ch13). --&gt;
+&lt;!--   -	Modelos logit. --&gt;
+&lt;!-- - Evaluación de autocorrelación y heteroscedasticidad (TE ch13) --&gt;
+&lt;!--   -	Figure 13.12: US Unemployment Rate Over Time, with OLS Fit  --&gt;
+&lt;!--   -	Figure 13.14: A Very Simplified Demonstration of Why Heteroskedasticity Messes Up Standard Errors --&gt;
+&lt;!--   -	Robust standard errors, clustered standard errors --&gt;
+
+
+&lt;!-- --- --&gt;
+&lt;!-- ### Taller 3: Aplicando lo aprendido sobre datos reales  --&gt;
+
+&lt;!-- -	Load data on real and natural experiments, explore, obtain main outputs --&gt;
+&lt;!--   -	¿Cómo garantizar que los grupos están bien delineados?: Revisar correlación entre el covariables y el tratamiento. --&gt;
+&lt;!--   -	Revisemos ejemplos de experimentos naturales y RCTs --&gt;
+&lt;!-- -	Data to replicate RCT exercise available in QJE or AEA datasets. Below a few suggestions to work with: --&gt;
+&lt;!--   -	Nick Bloom QJE paper on working from home on productivity and other firm level outcomes --&gt;
+&lt;!--   -	Data para replicar Michelopolous et al (2016) está disponible en AEA data. --&gt;
+&lt;!--   -	Data para replicar Dufflo and Hanna / Miguel and Kremer también está en AEA. --&gt;
+&lt;!-- -	Repasando estructuras base de R (vectores, matrices, funciones) para introducir simulaciones --&gt;
+&lt;!--   -	¿Cómo crear datos simulados? ¿cómo evaluar una hipótesis con simulaciones?  --&gt;
+&lt;!--     -	Sharp null (si el treatment effect es cero en todos los individuos, el efecto observado es producto del azar. ¿Como se compara el efecto observado al efecto observado si reordenamos los tratamientos aleatoriamente?) (TM has Good examples) --&gt;
+&lt;!--     -	Boostraping --&gt;
+&lt;!-- -	Introducción a Rmarkdown para responder las asignaciones --&gt;
+
+
+## Talleres de análisis de datos
+  
+Tras la culminación de cada clase teórica tendremos un taller donde revisaremos algunas maneras de aplicar los métodos presentados en clase.
+
+
+Para ello nos valdremos de **R** y **Rstudio**
+
+Si aún no lo has hecho:  
+
+.pull-left[
+1. Descarga e instala [R](https://www.r-project.org/).
+2. Luego descarga e instala [RStudio.](https://www.rstudio.com/products/rstudio/)
+]
+
+.pull-right[
+&lt;img src="images/r_rstudio.png" width="40%" height="40%" /&gt;
+]
+
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+
+*Nota: También puedes trabajar desde tu buscador accediendo a [Rstudio Cloud](https://www.rstudio.com/products/cloud/). El plan gratuito tiene límites de almancenamiento y procesamiento, pero basta para manejar las asignaturas del curso si lo usas bien.*
+
+
+---
+
+## R y Rstudio
+  
+**R** es un ecosistema de software gratuito para análisis estadístico y la visualización de datos. **RStudio** es un Entorno Integrado de Desarrollo (IDE) que ayuda a los usuarios de R a programar cómodamente.
+
+Piensa en **R como el motor** corriendo tu análisis, y en **Rstudio como la cabina de control.**      
+
+.pull-left[
+&lt;img src="images/motor.jpg" width="80%" height="80%" /&gt;
+
+
+]
+
+.pull-right[
+&lt;img src="images/cabina.jpg" width="80%" height="80%" /&gt;
+]
+
+
+---
+
+## ¿Por qué R y RStudio?
+
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+
+- Es gratis
+
+- Comunidad activa e innovación constante (Tip: sigue a [@R4DScommunity](https://twitter.com/R4DScommunity?s=20&amp;t=ALR2omSKksL53wWja8JHxg) en twitter)
+
+- Programación orientada objetos (tal cómo Python o Javascript)
+
+- Excelentes librarias para el análisis y la visualización de datos 
+
+- Soluciones cómodas para crear [reportes](https://rmarkdown.rstudio.com/gallery.html), [presentaciones](https://arm.rbind.io/slides/xaringan.html#94), libros, [páginas web](https://nz-stefan.shinyapps.io/commute-explorer-2/), [APIs](https://www.rplumber.io/), y más
+
+- Alta demanda en el mercado laboral    
+
+---
+
+## Un vistazo a tu ambiente de trabajo (R Studio IDE)
+.center[
+&lt;img src="images/Rstudio1.png" width="75%" height="75%" /&gt;
+]
+
+.footnote[From Montané]
+
+---
+
+## Principios de la programación en R
+
+
+.pull-left[
+
+1. Todo es un **objeto**
+
+2. Cada objeto tiene un **nombre** y un **valor**
+
+3. Puedes insertar los objetos en **funciones** (bloques de código abreviado)
+
+4. Las funciónes vienen con **instrucciones**
+
+6. Las funciones son empaquetadas en **librerías** 
+
+7. Las funciones emiten **alertas sobre posibles errores**
+&lt;!-- 5. R tiene funciones preinstaladas, pero exísten "librerias" de funciones nuevas que puedes descargar gratis. --&gt;
+&lt;!-- 6. Cualquiera puede crear sus propias funciones, empaquetarlas en su propia libreria y publicar la librería. --&gt;
+]
+
+.pull-right[
+
+`precio`
+
+`precio&lt;-100`
+
+`log(precio, base = 10)`
+
+&lt;br&gt;
+`??log`
+
+`library(ggplot2)`
+
+`log(-1)`
+
+
+]
+
+.footnote[From Mcdermott and Imbens]
+
+
+---
+layout:true
+
+##Objetos y funciones
+
+---
+
+.pull-left[
+
+Las matrices son objetos útiles en la programación y aplicación de métodos lineales.
+
+Veamos cómo se crea una matriz en R con la función matrix(). 
+
+
+
+```r
+## revisa la documentación
+??matrix()
+# data: opcional, require insertar un vector
+# nrow: número filas de la matriz
+# ncol: número columnas de la matriz
+```
+]
+
+.pull-right[
+
+&lt;img src="images/help-matrix.jpg" width="100%" height="80%" /&gt;
+]
+
+.footnote[From Mcdermott and Imbens]
+
+---
+
+.pull-left[
+
+```r
+# Creemos un vector con un cero
+obj_1&lt;-0
+
+# Matriz A: 5x2 llena de ceros
+A&lt;-matrix(data = obj_1, nrow = 5, ncol = 2)
+
+# Veamos la matriz A
+A
+```
+
+```
+##      [,1] [,2]
+## [1,]    0    0
+## [2,]    0    0
+## [3,]    0    0
+## [4,]    0    0
+## [5,]    0    0
+```
+]
+
+.pull-right[
+
+```r
+# Creemos un vector con numeros del 1 al 10
+obj_2&lt;-c(1:10)
+
+# Matrix B: 5x2 con una sequencia numerica
+B&lt;-matrix( data = obj_2, nrow = 5, ncol = 2)
+
+# Veamos la matriz B
+B
+```
+
+```
+##      [,1] [,2]
+## [1,]    1    6
+## [2,]    2    7
+## [3,]    3    8
+## [4,]    4    9
+## [5,]    5   10
+```
+
+]
+
+---
+layout: true
+## Funciones para análisis estadístico
+
+---
+
+.pull-left[
+
+Este es el código que vamos a correr. 
+
+```r
+x&lt;-c(1:10) # vector x
+y&lt;-x*2+5   # vector y
+# Mean
+mean(x)
+# Median
+median(x)
+# Std. dev. and variance
+sd(x)
+var(x)
+# Min. and max.
+min(x)
+max(x)
+# Correlation/covariance
+cor(x, y)
+cov(x, y)
+# Quartiles and mean of x
+summary(x)
+```
+]
+
+.pull-right[
+
+Este es el output que veremos en la consola de Rstudio:
+
+
+```
+## [1] 5.5
+```
+
+```
+## [1] 5.5
+```
+
+```
+## [1] 3.02765
+```
+
+```
+## [1] 9.166667
+```
+
+```
+## [1] 1
+```
+
+```
+## [1] 10
+```
+
+```
+## [1] 1
+```
+
+```
+## [1] 18.33333
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##    1.00    3.25    5.50    5.50    7.75   10.00
+```
+
+]
+
+---
+Otras funciones
+
+.pull-left[
+
+Este es el código que vamos a correr:
+
+```r
+# Set seed (pin down random number generation)
+set.seed(1)
+# 4 random draws from N(3,5)
+rnorm(n = 4, mean = 3, sd = sqrt(5))
+# CDF for N(0,1) at z=1.96
+pnorm(q = 1.96, mean = 0, sd = 1)
+# Sample 5 draws from x w/ repl.
+sample(
+  x = x,
+  size = 5,
+  replace = T
+)
+# First and last 3 elements of x
+head(x, 3)
+tail(x, 3)
+```
+]
+
+.pull-right[
+Este es el output que veremos en la consola de Rstudio:
+
+```
+## [1] 1.599207 3.410639 1.131478 6.567156
+```
+
+```
+## [1] 0.9750021
+```
+
+```
+## [1] 2 3 1 5 5
+```
+
+```
+## [1] 1 2 3
+```
+
+```
+## [1]  8  9 10
+```
+
+]
+
+---
+
+Otras funciones
+
+.pull-left[
+Este es el código que vamos a correr:
+
+```r
+# Set seed (pin down random number generation)
+set.seed(1)
+# 4 random draws from N(3,5)
+distribucion_normal&lt;-rnorm(n = 4, mean = 3, sd = sqrt(5))
+# CDF for N(0,1) at z=1.96
+cdf&lt;-pnorm(q = 1.96, mean = 0, sd = 1)
+# Sample 5 draws from x w/ repl.
+muestra&lt;-sample(
+  x = x,
+  size = 5,
+  replace = T
+)
+# First and last 3 elements of x
+head_x&lt;-head(x, 3)
+tail_x&lt;-tail(x, 3)
+```
+]
+
+.pull-right[
+Este es el output que veremos en la consola de Rstudio:
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+**Ahora no veo el código ¿Que pasó?**
+
+
+]
+
+---
+
+Otras funciones
+
+.pull-left[
+Este es el código que vamos a correr:
+
+```r
+# Set seed (pin down random number generation)
+set.seed(1)
+# 4 random draws from N(3,5)
+distribucion_normal&lt;-rnorm(n = 4, mean = 3, sd = sqrt(5))
+# CDF for N(0,1) at z=1.96
+cdf&lt;-pnorm(q = 1.96, mean = 0, sd = 1)
+# Sample 5 draws from x w/ repl.
+muestra&lt;-sample(
+  x = x,
+  size = 5,
+  replace = T
+)
+# First and last 3 elements of x
+head_x&lt;-head(x, 3)
+tail_x&lt;-tail(x, 3)
+```
+]
+
+.pull-right[
+Los objetos que definimos a la derecha fueron guardados al correr el nuevo código. En el panel de estructura de datos queda constancia de ello.
+
+  ![panel_de_datos](images/panel_de_estructura_de_datos.png)
+
+]
+
+
+---
+layout: true
+
+## Introducción al tidyverse
+
+---
+
+### (Tidy ~ Ordenado) + (verse ~ universo)
+
+- El tidyverse es un conjunto de librerías en R basados en la misma filosofía
+- Tiene su propia sintaxis y fue pensado para ser más intuitivo que las funciones "base" de R
+
+### Promueve usar datos en formato *Tidy*:
+
+.pull-left[
+1. Cada variable tiene su propia columna
+2. Cada observación tiene su propia fila
+3. Cada valor tiene su propia celda
+]
+
+
+.pull-right[
+
+   ![Tidy data](images/tidy-1.png)
+
+]
+
+**¿Qué se gana con esto?:** Orden. Hay mil de maneras de tener datos desordenados, pero sólo una manera de tener datos tidy.
+
+---
+
+### Brinda soluciones para cada etapa del análisis de datos
+
+Cuenta con al menos 8 librerías que usaremos a lo largo del curso.
+
+.pull-left[
+
+![Analisis](images/data-science-explore.png)
+
+]
+
+.pull-right[
+
+
+#### Esta semana:
+
+-**dplyr** para manipular datos en formato tidy.   
+-**ggplot2** para visualizarlos. 
+
+]
+
+---
+layout: true
+## ¿Tidy or not? 
+
+---
+### World development indicators (World Bank database)  
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Country Name &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Series Name &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Series Code &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; 1960 [YR1960] &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; 1961 [YR1961] &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; 1962 [YR1962] &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; GDP per capita (current US$) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NY.GDP.PCAP.CD &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 59.7732337032148 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 59.8608999923829 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 58.4580086983139 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; GDP (current US$) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NY.GDP.MKTP.CD &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 537777811.111111 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 548888895.555556 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 546666677.777778 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Life expectancy at birth, total (years) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; SP.DYN.LE00.IN &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 32.446 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 32.962 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 33.471 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Population, total &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; SP.POP.TOTL &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 8996967 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 9169406 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 9351442 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+**Opiniones: ¿es tidy? ¿por qué?**
+
+---
+
+### World development indicators, version tidy
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; year &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; continent_name &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; country_name &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; gdp_pc &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; life_exp &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; population &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1960 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 59.77323 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 32.446 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8996967 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1961 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 59.86090 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 32.962 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9169406 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1962 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 58.45801 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 33.471 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9351442 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1963 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 78.70643 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 33.971 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9543200 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1964 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 82.09531 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 34.463 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9744772 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1965 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 101.10833 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 34.948 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9956318 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1966 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 137.59430 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 35.430 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10174840 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1967 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 160.89843 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 35.914 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10399936 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+---
+layout: true
+
+## Librería dplyr
+
+Esta librería sirve para manipular de datos en formato tidy (variables en columnas, observaciones en vilas, un valor por celda).
+
+---
+
+Para instalarlo en tu equipo:
+
+
+```r
+install.packages("dplry")
+```
+
+Para cargar todas las funciones a en tu sesión:
+
+```r
+library(dplry)
+```
+
+
+Usa "::" para acceder a todas las funciones de la librería
+
+```r
+dplyr::
+```
+
+---
+
+.pull-left[
+
+**Funciones principales:**
+- `filter()`: Devlueve los **registros** que cumplen ciertas condiciones.
+- `select()`: Selecciona, ordena y cambia el nombre de las **variables**.
+- `arrange()`: Ordena los registros según ciertas variables.
+- `mutate()`: Crea o transforma variables.
+- `summarise()`: Collapsa todos los registros individuales en uno solo. 
+
+]
+
+
+.pull-right[
+
+**Ejemplos:**
+
+
+```r
+filter(data=datos, continent=="Europe")
+```
+
+
+```r
+select(data=datos, year,pais=country,poblacion=pop)
+```
+
+
+```r
+arrange(data=datos, country,year)
+```
+
+
+```r
+mutate(datos, gdp=pop*gdpPercap)
+```
+
+
+```r
+summarise(data=filter(data=datos, year==2007),
+          lifeExp=mean(lifeExp))
+```
+]
+
+---
+layout: false
+
+## El operador puente (%&gt;%)
+
+Es una *función operacional especial* incluída en dplyr. Hace el código mas legible y eficiente. **Short-cut: Crtl+Shitf+M**
+
+Conecta **cualquier objeto** a a la izquierda con el primer argumento de **cualquier función** a la derecha.
+
+.pull-left[
+
+**Ejemplos originales:**
+
+
+```r
+filter(data=datos, continent=="Europe")
+```
+
+
+```r
+select(data=datos,year,pais=country,pob=pop)
+```
+
+
+```r
+arrange(data=datos, country, year)
+```
+
+
+```r
+mutate(datos, gdp=pop*gdpPercap)
+```
+
+
+```r
+summarise(data=filter(data=datos, year==2007),
+          lifeExp=mean(lifeExp))
+```
+
+]
+
+.pull-right[
+
+**Ejemplos con %&gt;% :**
+
+
+```r
+datos %&gt;% filter(continent=="Europe")
+```
+
+
+```r
+datos %&gt;% select(year,pais=country,poblacion=pop)
+```
+
+```r
+datos %&gt;% arrange(country,year)
+```
+
+```r
+datos %&gt;% mutate(gdp=pop*gdpPercap)
+```
+
+```r
+datos %&gt;% filter(year==2007) %&gt;%  summarise(lifeExp=mean(lifeExp))
+```
+
+]
+
+
+---
+layout: true
+
+## dplyr en acción
+
+Usa **select()** para darle orden a tus datos
+
+.pull-left[
+
+Imagina que te mandan a trabajar con este dataset
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; nombre_terrible.1 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; value &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; nombre.peor.2 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; A &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.01 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; I &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; A &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2.40 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; I &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; B &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.76 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; II &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; B &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.80 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; II &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+]
+
+
+---
+
+
+.pull-right[
+
+Reordena las columnas 
+
+```r
+datos_terribles %&gt;% 
+  select(nombre_terrible.1, nombre.peor.2,value) 
+```
+
+```
+##   nombre_terrible.1 nombre.peor.2 value
+## 1                 A             I -0.01
+## 2                 A             I  2.40
+## 3                 B            II  0.76
+## 4                 B            II -0.80
+```
+]
+
+---
+.pull-right[
+
+Reordena, excluye y cambia los nombres: 
+
+```r
+datos_terribles %&gt;% 
+  select(categoria=nombre_terrible.1,
+         valor=value)
+```
+
+```
+##   categoria valor
+## 1         A -0.01
+## 2         A  2.40
+## 3         B  0.76
+## 4         B -0.80
+```
+]
+
+---
+.pull-right[
+
+Selecciona variables según su formato 
+
+```r
+datos_terribles %&gt;% 
+  select(where(is.numeric)) 
+```
+
+```
+##   value
+## 1 -0.01
+## 2  2.40
+## 3  0.76
+## 4 -0.80
+```
+
+]
+
+---
+.pull-right[
+
+Selecciona variables según su nombre 
+
+```r
+datos_terribles %&gt;% 
+  select(starts_with("nombre"))
+```
+
+```
+##   nombre_terrible.1 nombre.peor.2
+## 1                 A             I
+## 2                 A             I
+## 3                 B            II
+## 4                 B            II
+```
+
+]
+
+---
+
+layout: true
+
+## dplyr en acción
+
+---
+
+Restringe tu analisis a grupos específicos.
+
+.pull-left[
+**filter()**
+
+```r
+WDI_long %&gt;% 
+  ## only years where data is available
+  filter(year==2018) %&gt;% 
+  ## only North American countries
+  filter(continent_name=="South America" ) %&gt;% 
+  ## only year, country, and per capita gdp
+  select(year,country_name,gdp_pc)
+```
+
+]
+
+.pull-right[
+
+```
+## # A tibble: 12 x 3
+##     year country_name  gdp_pc
+##    &lt;dbl&gt; &lt;chr&gt;          &lt;dbl&gt;
+##  1  2018 Argentina     11633.
+##  2  2018 Bolivia        3549.
+##  3  2018 Brazil         9151.
+##  4  2018 Chile         15888.
+##  5  2018 Colombia       6730.
+##  6  2018 Ecuador        6296.
+##  7  2018 Guyana         6146.
+##  8  2018 Paraguay       5783.
+##  9  2018 Peru           6958.
+## 10  2018 Suriname       6938.
+## 11  2018 Uruguay       18704.
+## 12  2018 Venezuela, RB    NA
+```
+
+]
+
+---
+
+Crea nuevas variables 
+
+.pull-left[
+
+**mutate()**
+
+```r
+WDI_long %&gt;% 
+  ## select variables of your interest
+  select(year,country_name,gdp_pc ,population) %&gt;% 
+  ## estimate total GDP by country (in billions). Keep 3 decimals
+  mutate(gdp_bn=round(population*gdp_pc/(10^9),3)) %&gt;% 
+  head()
+```
+]
+
+.pull-right[
+
+
+```
+## # A tibble: 6 x 5
+##    year country_name gdp_pc population gdp_bn
+##   &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt;      &lt;dbl&gt;  &lt;dbl&gt;
+## 1  1960 Afghanistan    59.8    8996967  0.538
+## 2  1961 Afghanistan    59.9    9169406  0.549
+## 3  1962 Afghanistan    58.5    9351442  0.547
+## 4  1963 Afghanistan    78.7    9543200  0.751
+## 5  1964 Afghanistan    82.1    9744772  0.8  
+## 6  1965 Afghanistan   101.     9956318  1.01
+```
+
+]
+
+---
+
+Obten montos totales, promedios y otras medidas agregadas
+
+.pull-left[
+**summarise()**
+
+
+```r
+WDI_long %&gt;% 
+  ## keep year 2018
+  filter(year==2018) %&gt;% 
+  ## estimate total GDP by country (in billions). Keep 3 decimals
+  mutate(gdp_bn=round(population*gdp_pc/(10^9),3)) %&gt;% 
+  ## estimate world gdp and world population
+  summarise(life_exp=mean(life_exp, na.rm = T),
+            population=sum(population, na.rm = T),
+            gdp_bn=sum(gdp_bn, na.rm = T))
+```
+
+]
+
+.pull-right[
+
+```
+## # A tibble: 1 x 3
+##   life_exp population gdp_bn
+##      &lt;dbl&gt;      &lt;dbl&gt;  &lt;dbl&gt;
+## 1     72.8 7828350268 87756.
+```
+
+]
+
+---
+Extiende tus cálculos a lo largo de diferentes grupos
+
+.pull-left[
+
+**group_by()**
+
+
+```r
+WDI_long %&gt;%
+  filter(year==2018) %&gt;% 
+  group_by(continent_name) %&gt;% 
+  summarise(count=n(),
+            mean_life_exp=mean(life_exp,na.rm = T),
+            sd_life_exp=sd(life_exp,na.rm = T))
+```
+]
+
+.pull-right[
+
+```
+## # A tibble: 6 x 4
+##   continent_name count mean_life_exp sd_life_exp
+##   &lt;chr&gt;          &lt;int&gt;         &lt;dbl&gt;       &lt;dbl&gt;
+## 1 Africa            54          63.8        5.98
+## 2 Asia              51          74.4        5.04
+## 3 Europe            54          78.7        3.80
+## 4 North America     34          76.0        3.86
+## 5 Oceania           19          73.4        5.99
+## 6 South America     12          74.9        3.13
+```
+
+]
+
+---
+
+**Datos:** Ingreso per cápita de cada país desde 1950 hasta 2018. 
+
+**Desafío:** Obtén un resumen de la distribucion del ingreso por continente en el año mas reciente ¿cúal sintáxis te parece mas clara?
+
+.pull-left[
+
+### (a) Con funciones base de R:
+
+
+```r
+aggregate(x = WDI_long[WDI_long$year==max(WDI_long$year),"gdp_pc"]  , 
+          list(continent = WDI_long[WDI_long$year==max(WDI_long$year),]$continent_name), 
+          FUN = function(x) c(min=min(x,na.rm = T),
+                              mean=mean(x,na.rm = T),
+                              max=max(x,na.rm = T))) %&gt;% as.tibble()
+```
+
+]
+
+.pull-right[
+
+### (b) Con dplyr:
+
+
+```r
+WDI_long %&gt;%
+  filter(year==max(year)) %&gt;% 
+  group_by(continent_name) %&gt;% 
+  summarize(min=min(gdp_pc,na.rm = T),
+            mean=mean(gdp_pc,na.rm = T),
+            max=max(gdp_pc,na.rm = T))
+```
+
+]
+---
+Tenemos el ingreso por habitante de cada país desde 1950 hasta 2018. 
+
+**Desafío:** Obtén un resumen de la distribucion del ingreso por continente en el año mas reciente ¿cúal sintáxis te parece mas clara?
+
+.pull-left[
+
+### (a) Con funciones base de R:
+
+
+```
+## # A tibble: 6 x 2
+##   continent     gdp_pc[,"min"] [,"mean"] [,"max"]
+##   &lt;chr&gt;                  &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 Africa                  261.     2620.   16199.
+## 2 Asia                    507.    15233.   86118.
+## 3 Europe                 3663.    33384.  190513.
+## 4 North America          1272.    22471.  117098.
+## 5 Oceania                1655.    13524.   55057.
+## 6 South America          3552.     8520.   17688.
+```
+
+
+]
+
+.pull-right[
+
+### (b) Con dplyr:
+
+
+```
+## # A tibble: 6 x 4
+##   continent_name   min   mean     max
+##   &lt;chr&gt;          &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 Africa          261.  2620.  16199.
+## 2 Asia            507. 15233.  86118.
+## 3 Europe         3663. 33384. 190513.
+## 4 North America  1272. 22471. 117098.
+## 5 Oceania        1655. 13524.  55057.
+## 6 South America  3552.  8520.  17688.
+```
+
+]
+
+---
+layout:true
+## dplyr en acción 
+
+**Desafío:** ¿Qué es mayor? ¿La varianza del ingreso entre continentes o la varianza lo interno de cada continente? 
+
+---
+
+.pull-left[
+
+Replica el F-statistic del analisis de varianzas (Test ANOVA):
+1. Calcula la variancia entre grupos ("between"):    
+1.1 Calcula el promedio de cada grupo    
+1.2 Calcula la variance entre las medias muestrales y la media total
+2. Calcula la varianza a lo interno de cada grupo ("within")    
+     
+3. Produce el F-statistic: retio entre  Varbetween/Varwithin
+
+]  
+
+.pull-right[
+
+`$$F= \frac{\frac{\sum_{j=1}^n N_j(\overline{X}_j-\overline{X})^2}{k-1}}{\frac{\sum\sum(X-\overline{X}_j)^2 }{N-k}}$$`
+
+Where:
+- X: GDP per capita   
+- k: Number of continents or groups    
+- j: Continents   
+- N: Number of countries.  
+
+]
+
+---
+
+
+.pull-left[
+
+**Cálcula varianza entre continentes:**
+
+```r
+between_variance&lt;-gapminder_07 %&gt;% # Data similar a WDI
+  ## Calcula la media total  
+  mutate(total_mean=mean(lifeExp)) %&gt;% 
+  ## Calcula la media por continente con summarise
+  group_by(continent) %&gt;% 
+  summarise(n_countries=n(),
+            group_mean=mean(lifeExp),
+            total_mean=mean(total_mean)) %&gt;% 
+  ungroup() %&gt;% 
+  ## Calcula las diferencias between
+  mutate(dif_btw=(group_mean-total_mean)) %&gt;% 
+  ## calcula la varianza entre continentes
+  summarise(var_btw=sum(n_countries*dif_btw^2)/(n()-1))
+```
+]
+
+.pull-right[
+**Cálcula varianza intra-continental**
+
+```r
+within_variance&lt;-gapminder_07 %&gt;% # Data similar a WDI
+  ## Calcula la media por continente con summarise
+  group_by(continent) %&gt;% 
+  mutate(group_mean=mean(lifeExp)) %&gt;% 
+  ungroup() %&gt;% 
+  ## Calcula las diferencias within continents
+  mutate(dif_wtn=(lifeExp-group_mean)) %&gt;% 
+ # Calcula varianzas: 1) Eleva las diferencias al cuadrado, 
+  ## 2) sumalas, y divide entre tamano de muestra -df 
+  summarise(var_wtn=sum(dif_wtn^2)/(n()-5))
+```
+
+]
+
+
+
+
+---
+
+.pull-left[
+**Veamos los resultados:**
+
+*Usé las funciones print() y paste() para imrprimir los siguientes mensajes: *
+
+```
+## [1] "La varianza entre continentes es:  3265.2"
+```
+
+```
+## [1] "La varianza intra-continental es:  54.7"
+```
+
+```
+## [1] "El ratio entre ambas (F-statistic) es: 60"
+```
+
+```
+## [1] "La varianza entre continentes es:  3265.2"
+```
+
+```
+## [1] "La varianza intra-continental es:  54.7"
+```
+
+```
+## [1] "El ratio entre ambas (F-statistic) es: 60"
+```
+]
+
+.pull-right[
+**Checkeamos resultados con las funciones adecuadas**
+
+```r
+# Compare it with the output in the analysis of variance command
+aov.model &lt;- aov(lifeExp ~ continent,
+                 data = gapminder_07)
+# Summary of the analysis
+summary(aov.model)
+```
+
+```
+##              Df Sum Sq Mean Sq F value Pr(&gt;F)    
+## continent     4  13061    3265   59.71 &lt;2e-16 ***
+## Residuals   137   7491      55                   
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+]
+
+---
+
+layout: false
+
+## Una imagen vale mas que 1000 *líneas de código*
+&lt;img src="Workshop_01_xaringan_files/figure-html/unnamed-chunk-48-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+
+---
+layout: true
+
+## gplot2() and the grammar of graphics
+---
+
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+
+.pull-left[
+1. Tu gráfica esta vinculada a los datos mediante coordenadas (aesthetic mappings)
+2. Una vez que esaas coordenadas estan definidas puedes presentar tus graficos en distintas formas (geoms), tales como puntos, lineas, barras, etc
+3. Puedes agregar tantas capas como gustes a una grafica
+]
+
+.pull-right[
+
+![The baics](images/ggplot-grammar.png)
+
+]
+
+---
+layout:false
+
+## mapeo de coordenadas vs. y aplicacion de geoms
+
+
+
+.left-threeway[
+
+
+```r
+ggplot(data = gdp_pc_by_year, 
+       aes(x = year, y = gdp_pc)) +
+* geom_point() +
+  labs(x = "Year",
+       y = "GDP per capita")
+```
+
+&lt;img src="Workshop_01_xaringan_files/figure-html/unnamed-chunk-50-1.png" width="100%" /&gt;
+
+]
+
+--
+
+.center-threeway[
+
+```r
+ggplot(data = gdp_pc_by_year, 
+       aes(x = year, y = gdp_pc)) +
+* geom_line() +
+  labs(x = "Year",
+       y = "GDP per capita")
+```
+
+&lt;img src="Workshop_01_xaringan_files/figure-html/unnamed-chunk-51-1.png" width="100%" /&gt;
+]
+
+--
+
+.right-threeway[
+
+
+
+```r
+ggplot(data = gdp_pc_by_year, 
+       aes(x = year, y = gdp_pc)) +
+* geom_point()+
+* geom_line() +
+  labs(x = "Year",
+       y = "GDP per capita")
+```
+
+&lt;img src="Workshop_01_xaringan_files/figure-html/unnamed-chunk-52-1.png" width="100%" /&gt;
+]
+
+---
+
+## mapeo de atributos vs. hard-coded values
+
+.left-threeway[
+
+
+```r
+ggplot(data = gdp_pc_by_year, 
+       aes(x = year, y = gdp_pc)) +
+*geom_point(aes(color=gdp_pc))+
+  labs(x = "Year",
+       y = "GDP per capita")
+```
+
+&lt;img src="Workshop_01_xaringan_files/figure-html/unnamed-chunk-53-1.png" width="100%" /&gt;
+
+]
+
+--
+
+.center-threeway[
+
+
+```r
+ggplot(data = gdp_pc_by_year, 
+       aes(x = year, y = gdp_pc)) +
+*geom_line(color="navy")+
+  labs(x = "Year",
+       y = "GDP per capita")
+```
+
+&lt;img src="Workshop_01_xaringan_files/figure-html/unnamed-chunk-54-1.png" width="100%" /&gt;
+
+]
+
+--
+
+.right-threeway[
+
+
+```r
+ggplot(data = gdp_pc_by_year, 
+       aes(x = year, y = gdp_pc)) +
+*geom_line(aes(color="navy"))+
+  labs(x = "Year",
+       y = "GDP per capita")
+```
+
+&lt;img src="Workshop_01_xaringan_files/figure-html/unnamed-chunk-55-1.png" width="100%" /&gt;
+
+
+]
+
+
+---
+layout: false
+
+
+## Hablemos de la evolucion del ingreso por habitante y la esperanza de vida
+
+World development indicators (World Bank)
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; country_name &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; country_code &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; year &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; gdp_pc &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; gdp &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; life_exp &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; population &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; continent_name &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1960 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 59.77323 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 537777811 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 32.446 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8996967 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1961 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 59.86090 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 548888896 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 32.962 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9169406 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1962 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 58.45801 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 546666678 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 33.471 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9351442 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1963 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 78.70643 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 751111191 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 33.971 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9543200 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1964 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 82.09531 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 800000044 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 34.463 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9744772 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; AFG &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1965 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 101.10833 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1006666638 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 34.948 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9956318 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+layout:true
+## Gráficos de distribución
+
+---
+**Distribución del ingreso por habitante**
+
+.pull-left[
+
+
+```r
+# Total
+ ggplot(data=gapminder_07, aes(x=gdpPercap))+
+  # Geom de distribuciones de densidad. Ponemos color en fill afuera de los aesthetics
+  geom_density(fill="gray")+
+  # Geom de lineas verticales. Requiren el valor del punto de corte
+  # Usamos la palabra "Mean" en punto de corte para que la legenda de la 
+  # linea muestre esa palabra (not correct, but effective).
+  geom_vline(aes(xintercept = mean(gdpPercap),linetype="Mean"))+
+  labs(title="Distribución completa",
+       linetype="Stats",
+       x="Ingreso por habitante")
+```
+
+]
+ 
+
+.pull-right[
+
+&lt;img src="Workshop_01_xaringan_files/figure-html/unnamed-chunk-57-1.png" width="100%" /&gt;
+
+]
+
+---
+**Distribución del ingreso por habitante, por continente**
+
+.pull-left[
+
+```r
+# Por continente
+  ggplot(data= gapminder_07, aes(x=gdpPercap))+
+  # Geom de distribucion de densidades, especificando grupos
+  geom_density(aes(fill=continent), alpha=0.4) +
+  # Geom de lineas verticales
+  geom_vline(aes(xintercept = mean(gdpPercap),linetype="Mean"))+
+  # Geom de lineas verticales por contienente. Insertamos datos agregados a nivel continente para trazar varias lineas
+  geom_vline(data= group_by(gapminder_07,continent) %&gt;% 
+               summarise(gdpPercap=mean(gdpPercap)),
+             aes(xintercept = gdpPercap,color=continent), 
+             show.legend = F)+
+  scale_x_log10()+
+  labs(title="Distribución por continente",
+       fill="Muestra",
+       linetype="Stats",
+       x="Ingreso por habitante")
+```
+]
+
+.pull-right[
+&lt;img src="Workshop_01_xaringan_files/figure-html/unnamed-chunk-58-1.png" width="100%" /&gt;
+]
+
+---
+
+**Distribución de la esperanza de vida en el mundo** 
+
+.pull-left[
+
+
+```r
+gapminder_07 %&gt;%
+  ggplot(aes(x=lifeExp))+
+  # Geom de distribuciones de densidad. Ponemos color en fill afuera de los aesthetics
+  geom_density(fill="gray")+
+  # Geom de lineas verticales. Requiren el valor del punto de corte
+  # Usamos la palabra "Mean" en punto de corte para que la legenda de la 
+  # linea muestre esa palabra (not correct, but effective).
+  geom_vline(aes(xintercept = mean(lifeExp),linetype="Mean"))+
+  labs(title="Distribución completa",
+       linetype="Stats",
+       x="Esperanza de vida")
+```
+
+]
+ 
+.pull-right[
+
+&lt;img src="Workshop_01_xaringan_files/figure-html/unnamed-chunk-59-1.png" width="100%" /&gt;
+
+]
+
+---
+
+**Distribución de la esperanza de vida, por continente** 
+.pull-left[
+
+
+```r
+gapminder_07 %&gt;%
+  ggplot(aes(x=lifeExp))+
+  # Geom de distribucion de densidades, especificando grupos
+  geom_density(aes(fill=continent), alpha=0.4) +
+  # Geom de lineas verticales
+  geom_vline(aes(xintercept = mean(lifeExp),linetype="Mean"))+
+  # Geom de lineas verticales por contienente
+  # Insertamos datos agregados a nivel continente para trazar varias
+  # lineas
+  geom_vline(data= gapminder_07 %&gt;% 
+               group_by(continent) %&gt;% 
+               summarise(lifeExp=mean(lifeExp)),
+             aes(xintercept = lifeExp,color=continent), 
+             show.legend = F)+
+  scale_x_log10()+
+  labs(title="Distribución por continente",
+       fill="Muestra",
+       linetype="Stats",
+       x="Esperanza de vida")
+```
+]
+
+.pull-right[
+
+&lt;img src="Workshop_01_xaringan_files/figure-html/unnamed-chunk-60-1.png" width="100%" /&gt;
+
+]
+
+---
+layout:true
+## Relación entre dos variables continuas
+
+---
+
+**Define la data, las coordenadas, y la forma**
+.pull-left[
+
+
+```r
+# Datos y coordenadas
+ggplot(data=gapminder_07, 
+       mapping = aes(y=lifeExp,x=gdpPercap))+
+  # Formas o geometrias
+  geom_point()+
+  labs(x="Gdp Per Capita",
+       y="Life expectancy")
+```
+]
+
+.pull-right[
+&lt;img src="Workshop_01_xaringan_files/figure-html/unnamed-chunk-61-1.png" width="100%" /&gt;
+
+]
+---
+
+**Añade otras formas y haz cambios en el formato**
+
+.pull-left[
+
+```r
+ggplot(data=gapminder_07, 
+       mapping = aes(y=lifeExp,x=gdpPercap))+
+  # coordenadas para una geometria especifica
+  geom_point(aes(size=pop/1000000, color=continent))+
+  scale_size_continuous(labels=scales::number_format())+
+  labs(x="Gdp Per Capita",
+       y="Life expectancy",,
+       size="Pop (millions)")
+```
+]
+
+.pull-right[
+&lt;img src="Workshop_01_xaringan_files/figure-html/unnamed-chunk-62-1.png" width="100%" /&gt;
+]
+
+---
+
+**Cambiemos la escala de gpd per capita ¿Qué ganámos con logs?**
+
+.pull-left[
+
+```r
+ggplot(data=gapminder_07, 
+       mapping = aes(y=lifeExp,x=gdpPercap))+
+  # coordenadas para una geometria especifica
+  geom_point(aes(size=pop/1000000, color=continent))+
+  scale_size_continuous(labels=scales::number_format())+
+  scale_x_log10()+
+  labs(x="Gdp Per Capita (log scale)",
+       y="Life expectancy",
+       size="Pop (millions)")
+```
+]
+
+.pull-right[
+&lt;img src="Workshop_01_xaringan_files/figure-html/unnamed-chunk-63-1.png" width="100%" /&gt;
+]
+
+---
+layout: false
+### Para finalizar: Materiales complementarios
+
+Fuentes recomendadas para seguir aprendiendo:
+
+- [R for Economists video series](https://www.youtube.com/watch?v=dFSPmjSynCs&amp;list=PLcTBLulJV_AIuXCxr__V8XAzWZosMQIfW&amp;index=3) (by Nick Hungtington-Klein)
+- [R for Data Sicence](https://r4ds.had.co.nz/index.html) (Wickham &amp; Grolemund, 2017)     
+- [Statistical Inference via Data Science](https://moderndive.com/) (Ismay &amp; Kim, 2022)
+- [Top 50 ggplot2 Visualizations - The Master List](http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html#1.%20Correlation) (by Selva Prabhakaran).
+- [Video: The best stats you'll ever see](https://www.youtube.com/watch?v=hVimVzgtD6w) (by Hans Rosling)
+- [Video: Statistics without the agonizing pain](https://www.youtube.com/watch?v=5Dnw46eC-0o) (by John Rauser)
+
+
+&lt;!-- - [R for Economists Basics 1](https://www.youtube.com/watch?v=dFSPmjSynCs&amp;list=PLcTBLulJV_AIuXCxr__V8XAzWZosMQIfW&amp;index=2): Instalación de R y Rstudio, exploración de Rstudio IDE, cómo correr código, y comandos básicos. --&gt;
+&lt;!-- - [R for Economists Basics 2](https://www.youtube.com/watch?v=N6ueivyzK6Y&amp;list=PLcTBLulJV_AIuXCxr__V8XAzWZosMQIfW&amp;index=3): La función help() --&gt;
+&lt;!-- - [R for Economists Basics 3](https://www.youtube.com/watch?v=J20rEsukxlA&amp;list=PLcTBLulJV_AIuXCxr__V8XAzWZosMQIfW&amp;index=4): Objetos ¿cómo crearlos y actualizarlos? --&gt;
+&lt;!-- - [R for Economists Basics 4](https://www.youtube.com/watch?v=Kg9UCn7aq9Y&amp;list=PLcTBLulJV_AIuXCxr__V8XAzWZosMQIfW&amp;index=7): Vectores y matrices --&gt;
+&lt;!-- - [R for Economists Basics 5](https://www.youtube.com/watch?v=ULjXUW5yeDM&amp;list=PLcTBLulJV_AIuXCxr__V8XAzWZosMQIfW&amp;index=6): Data frames parte 1 --&gt;
+&lt;!-- - [R for Economists Basics 6](https://www.youtube.com/watch?v=N9mLpKAVKME&amp;list=PLcTBLulJV_AIuXCxr__V8XAzWZosMQIfW&amp;index=5): Data frames parte 2 --&gt;
+&lt;!-- - [R for Economists Basics 7](https://www.youtube.com/watch?v=l5bmDv98zX4&amp;list=PLcTBLulJV_AIuXCxr__V8XAzWZosMQIfW&amp;index=9): Librerias o paquetes --&gt;
+&lt;!-- - [R for Economists Basics 8](https://www.youtube.com/watch?v=l1lVtEyxnMs&amp;list=PLcTBLulJV_AIuXCxr__V8XAzWZosMQIfW&amp;index=9): Análisis descriptivo con una variable --&gt;
+&lt;!-- - [R for Economists Basics 9](https://www.youtube.com/watch?v=L5WV8KiD8-A&amp;list=PLcTBLulJV_AIuXCxr__V8XAzWZosMQIfW&amp;index=10): Análisis bi-variable --&gt;
+&lt;!-- - [R for Economists Basics 10](https://www.youtube.com/watch?v=pLh2gdHDUZc&amp;list=PLcTBLulJV_AIuXCxr__V8XAzWZosMQIfW&amp;index=11):  --&gt;
+&lt;!-- Gráficos con R báse --&gt;
+
+---
+### Próxima semana
+
+- Repasen sus apuntes de econometría 1 y 2. Discutiremos el método de MCO. 
+- Descarguen R y Rstudio. La clase de código será más interactiva.
+- En modulo 7 podran encontrar el código base del análisis de hoy. Juenguen con el y guardenlo de referencia para las asignaciones que vienen.
+- Instalen las siguientes librerías:
+
+
+```r
+# Librerías
+librerías &lt;- c("tidyverse", "readxl", "haven",
+               "lubridate","stringr",
+               "broom", "modelr","pml",
+               "palmerpenguins",
+               "knitr","rmarkdown")
+
+# Instalar librerias aun no instaladas
+installed_packages &lt;- librerías %in% rownames(installed.packages())
+if (any(installed_packages == FALSE)) {
+  install.packages(librerías[!installed_packages])
+}
+```
+
+
+---
+class: center middle
+# Fin de primer taller
+Gracias
+
+
+---
+
+## Datos para practicar: Restaurant inspections (causaldata::)
+
+
+```r
+knitr::kable(head(causaldata::restaurant_inspections), format = 'html')
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; business_name &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; inspection_score &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Year &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; NumberofLocations &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Weekend &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; MCGINLEYS PUB &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 94 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; FALSE &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; VILLAGE INN #1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 86 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2015 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 66 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; FALSE &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; RONNIE SUSHI 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 80 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2016 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 79 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; FALSE &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; FRED MEYER - RETAIL FISH &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 96 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2003 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 86 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; FALSE &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; PHO GRILL &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 83 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 53 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; FALSE &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; TACO KING #2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 95 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2008 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 89 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; FALSE &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+## Datos para practicar: Titanic (causaldata::)
+
+
+```r
+library(haven)
+
+read_data &lt;- function(df)
+{
+  full_path &lt;- paste("https://raw.github.com/scunning1975/mixtape/master/", 
+                     df, sep = "")
+  df &lt;- read_dta(full_path)
+  return(df)
+}
+# knitr::kable(head(read_data("titanic.dta")), format = 'html')
+```
+
+---
+
+## Datos para practicar: NYLS
+
+
+```r
+library(modelr)
+
+knitr::kable(head(modelr::heights), format = 'html')
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; income &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; height &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; weight &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; age &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; marital &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; sex &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; education &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; afqt &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 19000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 60 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 155 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 53 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; married &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; female &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6.841 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 35000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 70 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 156 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 51 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; married &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; female &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 49.444 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 105000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 65 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 195 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 52 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; married &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; male &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 99.393 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 40000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 63 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 197 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 54 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; married &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; female &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 44.022 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 75000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 66 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 190 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 49 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; married &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; male &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 59.683 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 102000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 68 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 200 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 49 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; divorced &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; female &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 98.798 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+## Datos para practicar: NYLS (Kennedy School)
+
+
+```r
+library(readr)
+
+knitr::kable(head(read_csv("data/nyls79.csv")), format = 'html')
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; id &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; sex &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; poor &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; education &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"ratio": "16:9",
+"countIncrementalSlides": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

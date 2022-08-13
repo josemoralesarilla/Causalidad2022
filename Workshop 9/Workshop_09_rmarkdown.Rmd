@@ -1,0 +1,166 @@
+---
+title: "Semana 09- code sessions"
+subtitle: "Controles sintéticos"
+author: "Carlos Daboín"
+date: "`r format(Sys.time(), '%B, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE, purl=FALSE}
+# Estas son las opciones default de nuestras ventanas de codigo (o chunks)
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning = FALSE, 
+                      message = FALSE)
+```
+
+```{r, librerias}
+library(tidyverse)
+library(haven)
+library(Synth)
+library(devtools)
+library(SCtools)
+
+texas <- read_dta("https://raw.github.com/scunning1975/mixtape/master/texas.dta") %>%
+  as.data.frame(.)
+```
+
+# Construcción de prisiones y encarcelamiento de minorías
+
+Hoy replicaremos los resultados de "Studying the Effect of Incarceration Socks to Drug Markets", un working paper de de S. Cunningham y S. Kang (2019).
+
+-   En 1980, el Departamento de Correccionales de Texas (TDC por sus siglas en inglés), perdio una demanda civil que lo forzaba a reducir la cantidad de prisioneros por celda para hacerlas mas habitables. Enfrentaron dos opciones: Construir mas prisiones o dejar a mas presos en libertad condicional.
+
+-   Optaron por reducir el hacinamiento otorgando mas sentencias de libertad condicional en el corto plazo.
+
+-   En 1993 se aprueban 1 millardo de dólares para la construcción de prisiones en Texas. Se duplica capacidad carcelaria en tres años.
+
+-   ¿Cúal fue el efecto del incremento de la capacidad carcelaria en la tasa de encarcelación de hombres Afor-Americanos?
+
+Démosle un vistazo a data:
+
+```{r raw_viz}
+
+head(texas)
+
+texas %>% 
+  # agrupemos los datos segun: Texas - todo lo demas
+  # creamos la variable Texas- todo lo demas con
+  mutate(categoria=ifelse(state=="Texas","Texas","USA (sin TX)")) %>% 
+  # usamos group by por ano y categoria
+  group_by(year,categoria) %>% 
+  # calculamos la poblacion total y la cantidad de prisioneros total por cruce ano-categoria
+  summarise(bmprison=sum(bmprison),
+            bmpop=sum(bmpop)) %>% 
+  # graficamos la tasa de encarcelacion por cada 100.000 habitantes
+  ggplot(aes(x=year, y=bmprison/bmpop*100000, group=categoria))+
+  geom_line(aes(color=categoria, linetype=categoria))+
+  geom_vline(xintercept = 1993)+
+  theme_minimal()+
+  labs(title = "Black men incarceration rates per 100.000",
+       subtitle = "Texas vs US",
+       y="Black men incarceration rates")
+```
+
+# Manos en la data
+
+```{r syntetic_controls}
+
+# Prepara el objeto que servira como base para el analisis de controles sinteticos
+dataprep_out <- Synth::dataprep(
+  foo = texas,                          # data
+  predictors = c("poverty", "income"),  # predictores
+  predictors.op = "mean",               # promedio 
+  time.predictors.prior = 1985:1993,    # Período para estimacion
+  special.predictors = list(            # segmentacion de la prediccion por variable
+    list("bmprison", c(1988, 1990:1992), "mean"), # fijate que controlamos por pre-treatment outcomes (more or less)
+    list("alcohol", 1990, "mean"),
+    list("aidscapita", 1990:1991, "mean"),
+    list("black", 1990:1992, "mean"),
+    list("perc1519", 1990, "mean")),
+  dependent = "bmprison",               # variable dependiente
+  unit.variable = "statefip",           # unidad en el panel de datos
+  unit.names.variable = "state",         
+  time.variable = "year",               # variable de tiempo en el panel de datos
+  treatment.identifier = 48,            # categoria de refeerencia
+  controls.identifier = c(1,2,4:6,8:13,15:42,44:47,49:51,53:56), # ids de los estados control. 
+  time.optimize.ssr = 1985:1993, # Período para la optimización.
+  time.plot = 1985:2000          # Período completo para la figura
+)
+
+## Corre el comando synth para crear el control sintético
+synth_out <- Synth::synth(dataprep_out)
+
+## Veamos los pesos mas altos (top 5)
+
+# extraigo los pesos del objeto synth_out
+pesos<-round(synth_out$solution.w*100,2)
+fip<-as.numeric(dimnames(synth_out$solution.w)[[1]]) # los pesos tienen un atributo, en el panel de objetos a la derecha podemos darnos cuenta de eso
+
+# creamos una pequena tabla juntando dos vectores en un data.frame
+data.frame(statefip=fip, pesos) %>% 
+  top_n(5,w.weight) %>% 
+  left_join(distinct(texas,state,statefip))
+
+
+## Capturemos la diferencia entre Texas y Texas sintética
+gaps <- dataprep_out$Y1plot -   (dataprep_out$Y0plot %*% synth_out$solution.w) 
+# Y1plot: tasa de encarcelamiento de Texas
+# Control sintético: Producto matricial entre tasa de encarcelamiento de cada estado y el vector de pesos.
+# Resulta en un Promedio ponderado
+gaps
+
+```
+
+## Visualizando el efecto
+
+```{r levels_chart}
+# Comparacion en niveles: Texas vs Texas sintetica
+path.plot(synth_out, dataprep_out)
+
+```
+
+```{r gap_chart}
+# Visualizacion de brecha
+gaps.plot(synth_out, dataprep_out)
+```
+
+# Placebo tests: Probemos que las diferencias son significativas
+
+Nuestra prueba consiste en asignarle el tratamiento a cada estado y reestimar el modelo. Texas siempre sera parte del pool de donantes (un posible estado de control).
+
+Como vimos antes, podemos comparar las diferencias entre la tasa de encarcelacion de afroamericanos entre Texas y el control sintético antes y después del tratamiento con el Root Mean Squared Prediction Error (RMSPE) pre y post-tratamiento. Si RMSPE el post-tratamiento es relativamente mayor, sabemos que el tratamiento causó diferencias importantes.
+
+$$
+R M S P E=\left(\frac{1}{T-T_{0}} \sum_{t=T_{0}+t}^{T}\left(Y_{1 t}-\sum_{j=2}^{J+1} w_{j}^{*} Y_{j t}\right)^{2}\right)^{\frac{1}{2}}
+$$
+
+Bueno: Eso mismo hay que hacerlo en cada iteración. Al final de las simulaciones, ordenaremos todos los ratios entre RMSPE pre y RMSPE post y los ordenaremos de menor a mayor. Después calcularemos el p-valor, que es simplemente una medida de que tan extremo es el valor del experimento real $p=\frac{R A N K}{T O T A L}$
+
+```{r placebos, include=FALSE}
+placebos <- generate.placebos(dataprep_out, synth_out, Sigf.ipop = 2)
+# Si tienes prisa, usa Sigf.ipop = 2. 
+# Si tienes tiempo y quieres precisión, usa el default Sigf.ipop = 3.
+
+```
+
+```{r}
+## Compara predictibilidad antes y después del tratamientro entre Texas y placebos
+ratio <- mspe.test(placebos) 
+
+ratio$test %>% 
+  arrange(desc(MSPE.ratios)) # ranking the MSPE post/MSPE pre
+
+ratio$p.val # p valor
+
+```
+
+Un vistazo final
+
+```{r}
+plot_placebos(placebos)
+
+mspe.plot(placebos, discard.extreme = TRUE, mspe.limit = 1, plot.hist = TRUE)
+```

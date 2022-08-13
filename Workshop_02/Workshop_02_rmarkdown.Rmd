@@ -1,0 +1,229 @@
+---
+title: "Semana 02- code sessions"
+subtitle: "R para el análisis de regresión"
+author: "Carlos Daboín"
+date: "`r format(Sys.time(), '%B, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning = FALSE, 
+                      message = FALSE)
+library(readr)
+library(tidyverse)
+```
+
+En este taller cubriremos el paso a paso del análisis de regresión lineal, deteniéndonos en cómo implementar algunas de sus variantes.
+
+Sin embargo, antes hablaremos de cómo preparar nuestros datos para tal fin. 
+
+# Siempre habrá algo que limpiar antes de comenzar.
+
+Recuerda: hay mil maneras de tener datos desordenados, pero solo una de tenerlos ordenados. Esta es la manera **tidy**, sobre la que paquetes como **dplyr** y **ggplot2** funcionan de maravilla.
+
+Echemos un vistazo al archivo de World Development Indicators (WDI) que descargué de la página del World Bank.
+
+```{r}
+WDI_wide<-read_csv("data/WDI_extract_data.csv")
+  
+## Vistazo a primeras filas
+### head() muestra por default las primeras 10
+WDI_wide %>% head() 
+
+## Vistazo a ultimas filas
+### tail() muestra por default las últimas 10
+WDI_wide %>% tail()
+  
+
+```
+
+Hay varios problemas:    
+
+- Cada año es una columna  
+  - Cada fila tiene muchas observaciones.   
+  -  Cada columna tiene multiples variables.  
+- Nombres con espacios: son incómodos a la hora de programar.  
+- Los missing values se identifican con ".." y esto hace que los valores estén en formato texto.  
+- Tiene formato de hoja de cálculo: Comentarios, espacios en blanco, y otros problemas.  
+- Países y grupo, bloque, o continente al que pertenecen en una misma columna.  
+  - Necesitamos la columna de continente por separado.  
+
+# Tus aliados para la limpieza: dplyr, janitor, stringr y tidyr 
+
+
+Filtrado preliminar: Conserva sólo lo que te interesa para no complicarnos de más.
+
+```{r}
+# Recuerda que los dos puntos despues del nombre de una libreria sirven para invocar a sus funciones. Usamos este formato para que veas claramente de donde sale cada funcion, pero no es necesario.
+
+WDI_long<-WDI_wide %>% 
+  # janitor::clean_names() remueve espacios y mayusculas del nombre de las columnas
+  janitor::clean_names() %>% 
+  # Siempre usaremos el paquete dplry de la clase pasada
+  # Remover columnas que no van a necesitar
+  # Remover registros problematicos
+  dplyr::select(-series_code) %>% 
+  dplyr::filter(! (is.na(country_code) | country_name=="World")) 
+ 
+head(WDI_long)
+```
+
+Empezemos a poner la data en formato tidy: empezemos unficando la variable *year*.
+
+```{r}
+
+WDI_long<-WDI_long %>% 
+  # Cada variable debe tener su propia columna
+  # 1. Unifica las columnas de año.
+  # tidyr::pivot_longer trasnpone K columnas en 2 columnas: 
+  # una con los nombres de las antiguas columnas, y otra con los valores 
+  tidyr::pivot_longer(cols = starts_with("x"),
+               names_to = "year",
+               values_to="value"  ) 
+
+```
+
+Aún falta para conseguir el formato tidy: Hay que poner cada indicador en su propia columna.
+
+```{r}
+WDI_long<-WDI_long %>% 
+ # 2. Asigna una columna nueva a cada indicador
+  # tidyr::pivot_wider() selecciona los valores en una columna y los usa para
+  # nombrar nuevas variables. Luego rellena estas columnas con los valores que le indiques
+  tidyr::pivot_wider(names_from = c("series_name"),
+              values_from= value) 
+  
+```
+
+Corrijamos detalles menores de nombres y formato.
+```{r}
+WDI_long<-WDI_long %>% 
+  # 3. Put more code-firendly names (These are too long, and have spaces)
+  dplyr::rename(gdp_pc="GDP per capita (current US$)",
+         population="Population, total",
+         gdp="GDP (current US$)",
+         life_exp="Life expectancy at birth, total (years)") %>% 
+  # 4. change format to numeric
+  dplyr::mutate_at(vars(gdp, gdp_pc,life_exp, population), as.numeric) %>% 
+  # 5. fix the years column: x1961_yr1961 get last 4 characters
+  dplyr::mutate(year=substr(year,
+                            stringr::str_length(year)-3,
+                            stringr::str_length(year))) %>% 
+  # 6. Remove year 2020 since it has too many missing estimates to date
+  dplyr::mutate(year=as.numeric(year)) %>% 
+  filter(year<2020)
+  
+```
+
+Finalmente, une (join) los nombres de cada continente  
+```{r}
+# Anticipo que necesitare una base de datos con nombres de cada continente
+continents<-read_csv("data/country-and-continent-codes-list.csv") %>% 
+               janitor::clean_names() %>%
+               select(continent_name ,three_letter_country_code)
+
+WDI_long<-WDI_long %>% 
+  # 7. We need continent names: Join the continent names data. 
+  # there are registers for groups of countries, you need an inner join
+  # there are other kinds of join: left, right, full 
+  inner_join(continents,
+             by=c("country_code"="three_letter_country_code")) 
+```
+
+
+##	Breve apartado sobre joins: Junta datos provenientes de fuentes diferentes.
+
+Es muy poco probable que todos los datos que necesitamos estén en un solo lugar. En el caso anterior tuvimos que conseguir una base de datos de codigo país y continente para añadir estos últimos a la data. 
+
+Supongamos que queremos unir las tablas A y B mediante la columna "cédula". Hay al menos 4 maneras de proceder:
+
+- **inner_join()**: Preservo a los individuos cuyas cédulas estan en A y B.
+- **left_join()**: Preservo a los individuos cuyas cédulas estan en A. Si no aparecen en B, simplemente no tendrán la información proveniente de esta tabla.
+- **right_join()**: Preservo a los individuos cuyas cédulas estan en B. Si no aparecen en A, simplemente no tendrán la información proveniente de esta tabla.
+- **full_join()**: Preservo a los individuos cuyas cédulas estan en A ó B. Todos serán preservados, pero los que no aparecen en A y B tendrán información incompleta.
+
+En resumen:    
+
+```{r,out.height="40%",out.width="40%", echo=FALSE}
+ knitr::include_graphics("images/join_meme.jpg")
+```
+
+# Programando regresiones e interpretando outputs.
+
+
+## Intro: Estimador MCO desde adentro: brute force vs linear algebra
+
+Hay muchas maneras de obtener los estimadores de MCO. Las herramientas computacionales recurren a métodos de algebra lineal para hacerlo de forma eficiente, para muchas variables a la vez. 
+
+Usaremos lo aprendido hasta el momento en manipulación de datos para llegar a los estimados en dos contextos hipersimplificados, con una sola variable explicativa.   
+
+
+Este primer ejemplo calcularemos el efecto lineal de una unidad adicional de la longitud de aletas sobre la longitud del pico (en mm).   
+```{r}
+# Esta sección la estudiaremos con los datos de pinguinos de la Antártica recolectada en el Palmer Station, Antartica LTER.
+
+penguins <-palmerpenguins::penguins %>%
+  # female
+  mutate(female=ifelse(sex=="female",1,0)) %>% 
+  # keep a single year
+  filter(year==2009) %>% 
+  # drop any observation with an NA 
+  # NOTE: don't do this so lightly in a serious research project
+  drop_na()
+
+# BETA BY BRUTE FORCE: SINGLE CONTINUOUS REGRESSOR
+
+# Variance covariance matrix of x and y variables
+var_covariance_xy<-var(penguins %>% 
+       select(flipper_length_mm, bill_length_mm))
+
+# OLS with a single explanatory and continuous variable 
+lm(flipper_length_mm~bill_length_mm, data=penguins)
+
+# Beta as the ratio of covariance/variance
+var_covariance_xy[[2]]/var_covariance_xy[[4]]
+```
+
+Este primer ejemplo calcularemos el efecto lineal del sexo del pinguino sobre la longitud del pico (en mm), usando la variable "female" como dummy.   
+
+```{r}
+# BETA BY BRUTE FORCE: SINGLE DISCRETE REGRESSOR
+
+# OLS with a single explanatory and continuous variable 
+lm(flipper_length_mm~female, data=penguins)
+
+penguins %>% 
+  # Calculate conditional means
+  group_by(female) %>% 
+  summarise(beta=mean(flipper_length_mm)) %>% 
+  # Calculate conditional mean of for male penguin
+  # Then calculate difference between female and male
+  mutate(B0=((1-female)*beta),
+         B1=beta-max(B0)) %>% 
+  summarise(B0=sum(B0),B1=sum(B1))
+
+```
+
+## ¿Cómo programar una regresión?
+## Paquetes para el análisis de regresiones.
+### library(broom) y library(modelr)
+## Interpretando coeficientes, errores standard
+## Sum of Squared Errors, R cuadrado, F statistic.
+# Transformación de variables y modelos no lineales
+## Transformaciones logaritmicas (TE ch13).
+##	Polinomios (TE ch13).
+##	Interacciones (TE ch13).
+##	Modelos logit.
+# Evaluación de autocorrelación y heteroscedasticidad (TE ch13)
+##	Figure 13.12: US Unemployment Rate Over Time, with OLS Fit 
+## Figure 13.14: A Very Simplified Demonstration of Why Heteroskedasticity Messes Up Standard Errors
+##	Robust standard errors, clustered standard errors
+# Evaluando el cumplimiento de los supuestos (pruebas y EDA(gglm package)) 
+
+
